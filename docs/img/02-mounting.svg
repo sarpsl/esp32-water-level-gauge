@@ -1,117 +1,83 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="862" viewBox="0 0 1240 862" font-family="DejaVu Sans, Arial, sans-serif">
-<defs><style>
- .ttl{font-size:22px;font-weight:700;fill:#111} .sub{font-size:13px;fill:#555}
- .mod{font-size:14px;font-weight:700;fill:#111} .lbl{font-size:13px;fill:#222}
- .d,.md,.sm,.dd,.bad{font-size:12px;font-family:DejaVu Sans Mono,monospace;fill:#222}
- .md{font-size:12px} .sm{font-size:11.5px;fill:#666} .dd{font-size:12px;font-weight:700;fill:#0b5cad}
- .bad{font-size:13px;font-weight:700;fill:#a30000}
-</style>
-<pattern id="hz" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
- <line x1="0" y1="0" x2="0" y2="8" stroke="#c0392b" stroke-width="1.6"/></pattern>
-</defs>
-<rect width="1240" height="862" fill="#fff"/>
-<text x="28" y="36" class="ttl">Mounting geometry — the numbers that decide whether this sensor works</text>
-<text x="28" y="58" class="sub">Cross-section, scale 1 cm = 1.6 px (the box and chimney are drawn true size). Distances are transducer face to the calm centre of the water surface.</text>
-<rect x="268.0" y="470.0" width="32.0" height="243.0" fill="#b9b4ad" stroke="#6f6a63" stroke-width="1.2"/>
-<rect x="787.7" y="470.0" width="32.0" height="243.0" fill="#b9b4ad" stroke="#6f6a63" stroke-width="1.2"/>
-<rect x="268.0" y="665.0" width="551.7" height="48.0" fill="#b9b4ad" stroke="#6f6a63" stroke-width="1.2"/>
-<rect x="300.0" y="470.0" width="487.7" height="195.0" fill="#bfe0f2" stroke="#5b93b5" stroke-width="1.2"/>
-<path d="M300 470.0 q 10.2 -5 20.3 0 t 20.3 0 q 10.2 5 20.3 0 t 20.3 0 q 10.2 -5 20.3 0 t 20.3 0 q 10.2 5 20.3 0 t 20.3 0 q 10.2 -5 20.3 0 t 20.3 0 q 10.2 5 20.3 0 t 20.3 0 q 10.2 -5 20.3 0 t 20.3 0 q 10.2 5 20.3 0 t 20.3 0 q 10.2 -5 20.3 0 t 20.3 0 q 10.2 5 20.3 0 t 20.3 0 q 10.2 -5 20.3 0 t 20.3 0 q 10.2 5 20.3 0 t 20.3 0 " fill="none" stroke="#5b93b5" stroke-width="1.4"/>
-<rect x="256.0" y="432.9" width="575.7" height="12.8" fill="#5d6672" stroke="#333" stroke-width="1.2"/>
-<line x1="256.0" y1="713.0" x2="831.7" y2="713.0" stroke="#888" stroke-width="1.0"/>
-<rect x="536.0" y="392.9" width="15.6" height="40.0" fill="#f7e7c6" stroke="#8a6a2f" stroke-width="1.4"/>
-<rect x="531.0" y="373.7" width="25.6" height="19.2" fill="#f2d9a8" stroke="#8a6a2f" stroke-width="1.6"/>
-<rect x="532.8" y="369.7" width="22.0" height="4.0" fill="#0b7d3f"/>
-<rect x="524.0" y="374.6" width="7.0" height="11.0" fill="#101418" stroke="#0b7d3f" stroke-width="1.2" rx="1"/>
-<line x1="524.0" y1="379.7" x2="435.0" y2="339.7" stroke="#0b5cad" stroke-width="1.2"/>
-<text x="431" y="336" class="lbl" text-anchor="end">OLED window on the shaded side</text>
-<text x="405" y="352" class="sm" text-anchor="end">0.96" SSD1306, same I²C bus</text>
-<text x="405" y="366" class="sm" text-anchor="end">sunlight washes it out — face it</text>
-<text x="431" y="380" class="sm" text-anchor="end">away from the sun, or blank it</text>
-<path d="M542 374 L513 665 L574 665 L546 374 Z" fill="#cfe9f7" stroke="#5b93b5" stroke-width="1.0" stroke-dasharray="4 3"/>
-<path d="M542 374 L538 430 L550 430 L546 374 Z" fill="url(#hz)" stroke="none" stroke-width="1.4"/>
-<rect x="530.8" y="445.7" width="26.0" height="5.0" fill="#c0392b"/>
-<line x1="543.8" y1="445.7" x2="543.8" y2="459.7" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="3 2"/>
-<line x1="245.0" y1="470.0" x2="245.0" y2="665.0" stroke="#0b5cad" stroke-width="1.4"/>
-<line x1="240.0" y1="470.0" x2="250.0" y2="470.0" stroke="#0b5cad" stroke-width="1.4"/>
-<line x1="240.0" y1="665.0" x2="250.0" y2="665.0" stroke="#0b5cad" stroke-width="1.4"/>
-<text x="237" y="568" class="dd" text-anchor="end">121.9 cm</text>
-<text x="237" y="584" class="sm" text-anchor="end">water depth (4 ft)</text>
-<line x1="215.0" y1="432.9" x2="215.0" y2="470.0" stroke="#0b5cad" stroke-width="1.4"/>
-<line x1="210.0" y1="432.9" x2="220.0" y2="432.9" stroke="#0b5cad" stroke-width="1.4"/>
-<line x1="210.0" y1="470.0" x2="220.0" y2="470.0" stroke="#0b5cad" stroke-width="1.4"/>
-<text x="207" y="451" class="dd" text-anchor="end">15.2 cm</text>
-<text x="207" y="467" class="sm" text-anchor="end">lid gap (6 in)</text>
-<line x1="200.0" y1="373.7" x2="200.0" y2="470.0" stroke="#0b7d3f" stroke-width="1.4"/>
-<line x1="195.0" y1="373.7" x2="205.0" y2="373.7" stroke="#0b7d3f" stroke-width="1.4"/>
-<line x1="195.0" y1="470.0" x2="205.0" y2="470.0" stroke="#0b7d3f" stroke-width="1.4"/>
-<text x="192" y="422" class="dd" text-anchor="end">52.2 cm</text>
-<text x="192" y="438" class="sm" text-anchor="end">face → full line</text>
-<line x1="762.0" y1="373.7" x2="762.0" y2="665.0" stroke="#0b5cad" stroke-width="1.4"/>
-<line x1="757.0" y1="373.7" x2="767.0" y2="373.7" stroke="#0b5cad" stroke-width="1.4"/>
-<line x1="757.0" y1="665.0" x2="767.0" y2="665.0" stroke="#0b5cad" stroke-width="1.4"/>
-<text x="754" y="519" class="dd" text-anchor="end">174.1 cm</text>
-<text x="754" y="535" class="sm" text-anchor="end">face → floor = d_empty</text>
-<line x1="470.0" y1="392.9" x2="470.0" y2="432.9" stroke="#8a6a2f" stroke-width="1.4"/>
-<line x1="465.0" y1="392.9" x2="475.0" y2="392.9" stroke="#8a6a2f" stroke-width="1.4"/>
-<line x1="465.0" y1="432.9" x2="475.0" y2="432.9" stroke="#8a6a2f" stroke-width="1.4"/>
-<text x="462" y="413" class="dd" text-anchor="end">25 cm</text>
-<text x="462" y="429" class="sm" text-anchor="end">chimney Ø60 mm</text>
-<line x1="300.0" y1="739.0" x2="787.7" y2="739.0" stroke="#0b5cad" stroke-width="1.4"/>
-<line x1="300.0" y1="734.0" x2="300.0" y2="744.0" stroke="#0b5cad" stroke-width="1.4"/>
-<line x1="787.7" y1="734.0" x2="787.7" y2="744.0" stroke="#0b5cad" stroke-width="1.4"/>
-<text x="544" y="757" class="dd" text-anchor="middle">304.8 cm (10 ft)</text>
-<text x="544" y="773" class="sm" text-anchor="middle">inner width — same as the depth, so 92.9 L per cm of level</text>
-<text x="544" y="358" class="dd" text-anchor="middle">ultrasonic face at the top of the box</text>
-<line x1="603.8" y1="353.7" x2="693.8" y2="313.7" stroke="#0b5cad" stroke-width="1.2"/>
-<text x="698" y="310" class="lbl" text-anchor="start">printed box on TOP of the lid,</text>
-<text x="698" y="326" class="lbl" text-anchor="start">not inside the tank</text>
-<text x="564" y="402" class="bad" text-anchor="start">blind zone ≈35 cm</text>
-<text x="564" y="418" class="sm" text-anchor="start">firmware rejects these</text>
-<text x="566" y="464" class="sm" text-anchor="start">spot Ø 13 cm at the full line</text>
-<text x="586" y="655" class="sm" text-anchor="start">spot Ø 38 cm at the floor</text>
-<text x="544" y="639" class="lbl" text-anchor="middle">water 121.9 cm deep · 11 327 L full · 92.9 L per cm</text>
-<line x1="528.8" y1="448.7" x2="391.8" y2="463.7" stroke="#c0392b" stroke-width="1.2"/>
-<text x="388" y="468" class="bad" text-anchor="end">✗ magnet under the lid:</text>
-<text x="388" y="484" class="sm" text-anchor="end">15.2 cm from the water — blind zone</text>
-<rect x="930.0" y="84.0" width="280.0" height="236.0" fill="#fff4f4" stroke="#a30000" stroke-width="1.6" rx="8"/>
-<text x="946" y="108" class="bad" text-anchor="start">✗ not under the lid</text>
-<text x="946" y="130" class="md" text-anchor="start">15.2 cm face-to-water is inside</text>
-<text x="946" y="149" class="md" text-anchor="start">the blind zone, so the sensor</text>
-<text x="946" y="168" class="sm" text-anchor="start">returns nothing or noise.</text>
-<text x="946" y="185" class="md" text-anchor="start">a metal lid plus rebar concrete</text>
-<text x="946" y="204" class="sm" text-anchor="start">walls form a partial Faraday cage</text>
-<text x="946" y="221" class="sm" text-anchor="start">— WiFi dies inside the tank.</text>
-<text x="946" y="238" class="md" text-anchor="start">≈100 % RH inside: condensation</text>
-<text x="946" y="257" class="sm" text-anchor="start">cycles through a printed box and</text>
-<text x="946" y="274" class="sm" text-anchor="start">corrodes a bare DevKitC in weeks.</text>
-<text x="946" y="291" class="md" text-anchor="start">no service access, no desiccant</text>
-<text x="946" y="310" class="sm" text-anchor="start">change, no room for an antenna.</text>
-<rect x="930.0" y="336.0" width="280.0" height="250.0" fill="#f4f8ff" stroke="#0b5cad" stroke-width="1.6" rx="8"/>
-<text x="946" y="360" class="lbl" text-anchor="start">mounting checklist</text>
-<text x="946" y="382" class="md" text-anchor="start">□ face ≥ 40 cm above full line</text>
-<text x="946" y="401" class="md" text-anchor="start">□ cone clears the 6 in lid gap</text>
-<text x="946" y="420" class="md" text-anchor="start">□ RSSI ≥ −75 dBm, lid closed</text>
-<text x="946" y="439" class="md" text-anchor="start">□ box in shade, vents down</text>
-<text x="946" y="458" class="md" text-anchor="start">□ antenna not shadowed by the lid</text>
-<text x="946" y="477" class="md" text-anchor="start">□ chimney bore ≥ 60 mm, smooth</text>
-<text x="946" y="496" class="md" text-anchor="start">□ OLED out of direct sun</text>
-<text x="946" y="515" class="sm" text-anchor="start"></text>
-<text x="946" y="532" class="md" text-anchor="start">beam spread ≈5–8° half angle:</text>
-<text x="946" y="551" class="sm" text-anchor="start">the cone clears the lid gap and</text>
-<text x="946" y="568" class="sm" text-anchor="start">lands in the middle of the tank,</text>
-<text x="946" y="585" class="sm" text-anchor="start">so there is no wall echo.</text>
-<rect x="930.0" y="592.0" width="280.0" height="234.0" fill="#fffdf3" stroke="#8a6a2f" stroke-width="1.6" rx="8"/>
-<text x="946" y="616" class="lbl" text-anchor="start">calibration values</text>
-<text x="946" y="638" class="md" text-anchor="start">d_empty = 174.0 cm</text>
-<text x="946" y="657" class="md" text-anchor="start">d_full  = 52.2 cm</text>
-<text x="946" y="676" class="md" text-anchor="start">area    = 92903 cm²</text>
-<text x="946" y="695" class="md" text-anchor="start">level = d_empty − distance</text>
-<text x="946" y="714" class="md" text-anchor="start">0…121.9 cm → 0…11 327 L</text>
-<text x="946" y="733" class="md" text-anchor="start">alarm defaults: low 24 cm</text>
-<text x="946" y="752" class="md" text-anchor="start">(≈20 %), high 120 cm</text>
-<text x="946" y="771" class="sm" text-anchor="start"></text>
-<text x="946" y="788" class="sm" text-anchor="start">measure with the serial e / f</text>
-<text x="946" y="805" class="sm" text-anchor="start">commands: the chimney height you</text>
-<text x="946" y="822" class="sm" text-anchor="start">actually print decides both.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="900" viewBox="0 0 1240 900" font-family="DejaVu Sans, Arial, sans-serif">
+<rect width="1240" height="900" fill="#ffffff"/>
+<text x="40" y="34" font-size="22" font-weight="bold" fill="#12202e">02 - rev B mounting section: 100 mm hole, 150 mm standoff, 75 deg cone</text>
+<text x="40" y="56" font-size="12.5" fill="#6b7480">Tank measured, not guessed: 304.8 x 304.8 x 121.9 cm internal, full line 15.2 cm below the lid, 92 903 cm2 of area = 92.9 L per cm of level = 11 327 L to</text>
+<text x="40" y="73" font-size="12.5" fill="#6b7480">the full line.</text>
+<text x="40" y="90" font-size="12.5" fill="#6b7480">Every distance below is face to surface, which is exactly what the e and f calibration commands store.</text>
+<polygon points="287.1,416.2 287.1,562.5 652.9,562.5 652.9,416.2Z" fill="none" stroke="#12202e" stroke-width="2" stroke-linejoin="round"/>
+<rect x="287.12" y="562.5" width="365.76" height="14" fill="#c9d3de" stroke="#12202e" stroke-width="1.2" rx="4"/>
+<text x="295.12" y="554.5" font-size="11.5" fill="#6b7480" text-anchor="start">tank floor</text>
+<rect x="287.12" y="398.0" width="365.76" height="10" fill="#b9c4d0" stroke="#12202e" stroke-width="1.2" rx="4"/>
+<text x="295.12" y="392.0" font-size="11.5" fill="#6b7480" text-anchor="start">lid</text>
+<rect x="464.0" y="398.0" width="12.0" height="10" fill="#ffffff" stroke="#12202e" stroke-width="1.0" rx="4"/>
+<line x1="458.0" y1="398.0" x2="458.0" y2="410" stroke="#20242a" stroke-width="1.6" stroke-linecap="round"/>
+<line x1="482.0" y1="398.0" x2="482.0" y2="410" stroke="#20242a" stroke-width="1.6" stroke-linecap="round"/>
+<text x="510" y="390.0" font-size="11.5" fill="#12202e" text-anchor="start">100 mm hole, 150 mm</text>
+<text x="510" y="404.5" font-size="11.5" fill="#12202e" text-anchor="start">stub pipe</text>
+<polygon points="289.1,416.2 650.9,416.2 650.9,561.5 289.1,561.5Z" fill="#dceaf6" stroke="#12202e" stroke-width="0" stroke-linejoin="round"/>
+<line x1="289.12" y1="416.2" x2="650.88" y2="416.2" stroke="#2a7fbf" stroke-width="2.2" stroke-linecap="round"/>
+<text x="297.12" y="438.2" font-size="12" fill="#1d5f92" font-weight="bold" text-anchor="start">water surface: the reflector</text>
+<rect x="455" y="380" width="30" height="16" fill="#cde6cd" stroke="#0a7d3c" stroke-width="1.8" rx="4"/>
+<text x="470" y="368" font-size="12" fill="#0a7d3c" font-weight="bold" text-anchor="middle">SR04M probe face, straight down</text>
+<polygon points="470.0,380.0 442.2,416.2 497.8,416.2Z" fill="#cfe2f2" stroke="#0b5cad" stroke-width="1.2" stroke-linejoin="round" stroke-dasharray="6 4"/>
+<text x="511.7654" y="438.2" font-size="11.5" fill="#0b5cad" text-anchor="start">beam 46 cm wide at the full line</text>
+<polygon points="470.0,380.0 330.0,562.5 610.0,562.5Z" fill="none" stroke="#6b7480" stroke-width="1.2" stroke-linejoin="round" stroke-dasharray="6 4"/>
+<text x="330.02250000000004" y="588.5" font-size="11.5" fill="#6b7480" text-anchor="start">beam 233 cm wide at an empty floor, still</text>
+<text x="330.02250000000004" y="603.0" font-size="11.5" fill="#6b7480" text-anchor="start">inside the 304.8 cm tank</text>
+<rect x="439" y="380" width="62" height="24" fill="#f6dede" stroke="#8c1c13" stroke-width="1.2" rx="4" stroke-dasharray="4 3"/>
+<text x="428" y="388.0" font-size="11.5" fill="#8c1c13" text-anchor="end">blind 20 cm</text>
+<text x="428" y="402.0" font-size="11.5" fill="#8c1c13" text-anchor="end">gate 25 cm</text>
+<line x1="720" y1="380" x2="720" y2="416.2" stroke="#0a7d3c" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="714" y1="380" x2="726" y2="380" stroke="#0a7d3c" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="714" y1="416.2" x2="726" y2="416.2" stroke="#0a7d3c" stroke-width="1.3" stroke-linecap="round"/>
+<text x="728" y="394.1" font-size="11.5" fill="#0a7d3c" font-weight="bold" text-anchor="start">30.2 cm</text>
+<text x="728" y="408.1" font-size="11.5" fill="#0a7d3c" text-anchor="start">face to full line</text>
+<line x1="860" y1="380" x2="860" y2="562.5" stroke="#0b5cad" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="854" y1="380" x2="866" y2="380" stroke="#0b5cad" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="854" y1="562.5" x2="866" y2="562.5" stroke="#0b5cad" stroke-width="1.3" stroke-linecap="round"/>
+<text x="868" y="467.25" font-size="11.5" fill="#0b5cad" font-weight="bold" text-anchor="start">152.1 cm</text>
+<text x="868" y="481.25" font-size="11.5" fill="#0b5cad" text-anchor="start">face to empty floor</text>
+<line x1="1015" y1="416.2" x2="1015" y2="562.5" stroke="#12202e" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="1009" y1="416.2" x2="1021" y2="416.2" stroke="#12202e" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="1009" y1="562.5" x2="1021" y2="562.5" stroke="#12202e" stroke-width="1.3" stroke-linecap="round"/>
+<text x="1023" y="485.35" font-size="11.5" fill="#12202e" font-weight="bold" text-anchor="start">121.9 cm</text>
+<text x="1023" y="499.35" font-size="11.5" fill="#12202e" text-anchor="start">span = level 100 %</text>
+<line x1="240.12" y1="380" x2="240.12" y2="398.0" stroke="#12202e" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="234.12" y1="380" x2="246.12" y2="380" stroke="#12202e" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="234.12" y1="398.0" x2="246.12" y2="398.0" stroke="#12202e" stroke-width="1.3" stroke-linecap="round"/>
+<text x="232.12" y="376.0" font-size="11.5" fill="#12202e" font-weight="bold" text-anchor="end">15.0 cm</text>
+<text x="232.12" y="390.0" font-size="11.5" fill="#12202e" text-anchor="end">face above lid</text>
+<line x1="180.12" y1="398.0" x2="180.12" y2="416.2" stroke="#12202e" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="174.12" y1="398.0" x2="186.12" y2="398.0" stroke="#12202e" stroke-width="1.3" stroke-linecap="round"/>
+<line x1="174.12" y1="416.2" x2="186.12" y2="416.2" stroke="#12202e" stroke-width="1.3" stroke-linecap="round"/>
+<text x="172.12" y="433.1" font-size="11.5" fill="#12202e" font-weight="bold" text-anchor="end">15.2 cm</text>
+<text x="172.12" y="447.1" font-size="11.5" fill="#12202e" text-anchor="end">lid to full line</text>
+<rect x="40" y="284" width="200" height="78" fill="#f4f8fb" stroke="#12202e" stroke-width="1.5" rx="4"/>
+<text x="52" y="306.0" font-size="12.5" fill="#12202e" font-weight="bold" text-anchor="start">electronics box</text>
+<text x="52" y="324" font-size="11" fill="#6b7480" text-anchor="start">ESP32, OLED, buzzer,</text>
+<text x="52" y="340" font-size="11" fill="#6b7480" text-anchor="start">boost, button, LED</text>
+<text x="52" y="356" font-size="11" fill="#0b5cad" text-anchor="start">4-wire cable down the stub</text>
+<polygon points="380.0,354.0 560.0,354.0 540.0,330.0 400.0,330.0Z" fill="#fbf1de" stroke="#c28000" stroke-width="1.6" stroke-linejoin="round"/>
+<text x="470" y="318" font-size="12" fill="#8c1c13" font-weight="bold" text-anchor="middle">cowl: sun, rain, insects. NEVER a screen across the</text>
+<text x="470" y="333" font-size="12" fill="#8c1c13" font-weight="bold" text-anchor="middle">aperture: 40 kHz will not pass a mesh.</text>
+<rect x="40" y="660" width="560" height="218.5" fill="#fdf6f4" stroke="#8c1c13" stroke-width="1.6" rx="6"/>
+<text x="54" y="684" font-size="14" fill="#8c1c13" font-weight="bold" text-anchor="start">Why 100 mm and 150 mm</text>
+<text x="54" y="706.0" font-size="12.5" fill="#12202e" text-anchor="start">Full line 30.2 cm below the face: 5.2 cm of headroom over the 25 cm</text>
+<text x="54" y="724.5" font-size="12.5" fill="#12202e" text-anchor="start">gate. That headroom covers swell, splash and a film on the face; it</text>
+<text x="54" y="743.0" font-size="12.5" fill="#12202e" text-anchor="start">does not cover an overfilled tank.</text>
+<text x="54" y="761.5" font-size="12.5" fill="#12202e" text-anchor="start">Above 30.2 cm the reading is reported FULL and clamps at 121.9 cm: a</text>
+<text x="54" y="780.0" font-size="12.5" fill="#12202e" text-anchor="start">report, not an interlock.</text>
+<text x="54" y="798.5" font-size="12.5" fill="#12202e" text-anchor="start">A narrow pipe, collar or cowl lip close above the cone turns the lid</text>
+<text x="54" y="817.0" font-size="12.5" fill="#12202e" text-anchor="start">into a resonant clutter chamber. Keep the aperture clear and wide.</text>
+<text x="54" y="835.5" font-size="12.5" fill="#12202e" text-anchor="start">Lid clutter reflects at 15-19 cm, inside the 20 cm blind area, so it</text>
+<text x="54" y="854.0" font-size="12.5" fill="#12202e" text-anchor="start">cannot reach the beam.</text>
+<rect x="640" y="660" width="560" height="181.5" fill="#fdf6f4" stroke="#8c1c13" stroke-width="1.6" rx="6"/>
+<text x="654" y="684" font-size="14" fill="#8c1c13" font-weight="bold" text-anchor="start">On the tank</text>
+<text x="654" y="706.0" font-size="12.5" fill="#12202e" text-anchor="start">Face parallel to the water within a few degrees: the cone must put a</text>
+<text x="654" y="724.5" font-size="12.5" fill="#12202e" text-anchor="start">return on the transducer, not on the far wall.</text>
+<text x="654" y="743.0" font-size="12.5" fill="#12202e" text-anchor="start">Wipe the face at every site visit - dust and cobwebs bias it near,</text>
+<text x="654" y="761.5" font-size="12.5" fill="#12202e" text-anchor="start">dew rejects the ping.</text>
+<text x="654" y="780.0" font-size="12.5" fill="#12202e" text-anchor="start">Check pad R19 unpopulated before sealing the box.</text>
+<text x="654" y="798.5" font-size="12.5" fill="#12202e" text-anchor="start">Probe cable serviceable: the probe must come out without draining the</text>
+<text x="654" y="817.0" font-size="12.5" fill="#12202e" text-anchor="start">tank.</text>
 </svg>

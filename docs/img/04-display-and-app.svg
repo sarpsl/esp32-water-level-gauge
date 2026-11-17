@@ -1,136 +1,150 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="700" viewBox="0 0 1240 700" font-family="DejaVu Sans, Arial, sans-serif">
-<defs>
- <style>
-  .ttl{font-size:23px;font-weight:700;fill:#111}
-  .sub{font-size:13px;fill:#555}
-  .mod{font-size:15px;font-weight:700;fill:#111}
-  .md{font-size:12.5px;fill:#222;font-family:DejaVu Sans Mono,monospace}
-  .sm{font-size:11.5px;fill:#666}
-  .lbl{font-size:13px;fill:#0b5cad}
-  .warn{font-size:13.5px;font-weight:700;fill:#a30000}
-  .ok{font-size:12.5px;fill:#0b7d3f}
-  .big{font-size:52px;font-weight:700;fill:#111;font-family:DejaVu Sans Mono,monospace}
-  .scr{font-size:21px;fill:#e8eef5;font-family:DejaVu Sans Mono,monospace}
-  .scrB{font-size:21px;font-weight:700;fill:#fff;font-family:DejaVu Sans Mono,monospace}
-  .ycoord{font-size:11px;fill:#8a6a2f;font-family:DejaVu Sans Mono,monospace}
-  .boxA{fill:#fffdf3;stroke:#8a6a2f;stroke-width:1.6}
-  .boxB{fill:#f4f8ff;stroke:#0b5cad;stroke-width:1.6}
-  .boxC{fill:#f2fbf4;stroke:#0b7d3f;stroke-width:1.6}
-  .boxR{fill:#fff4f4;stroke:#a30000;stroke-width:1.6}
- </style>
-</defs>
-<rect width="1240" height="700" fill="#fff"/>
-<text x="34" y="40" class="ttl">What the box shows and what the phone gets — OLED map, streams, message budget</text>
-<text x="34" y="62" class="sub">Left: the real 128×64 layout drawn by oledDraw() in water_level_gauge.ino, 4× size, every row on its y coordinate from the code.</text>
-<text x="34" y="82" class="sub">Right: the Blynk datastreams the same sample feeds. Both panels are optional: ENABLE_OLED 0 / ENABLE_BLYNK 0 and the gauge still works over LAN.</text>
-
-<!-- ================= SCREEN (4x scale, origin 64,140) ================= -->
-<g>
- <rect x="58" y="134" width="524" height="268" rx="8" fill="#14181d" stroke="#333" stroke-width="2"/>
- <!-- row bands, from the code: y=0,18,30,39,48,56 -->
- <line x1="58" y1="206" x2="582" y2="206" stroke="#2b3138"/>
- <line x1="58" y1="260" x2="582" y2="260" stroke="#2b3138"/>
- <line x1="58" y1="296" x2="582" y2="296" stroke="#2b3138"/>
- <line x1="58" y1="332" x2="582" y2="332" stroke="#2b3138"/>
- <line x1="58" y1="362" x2="582" y2="362" stroke="#2b3138"/>
- <text x="68" y="188" class="big">84</text>
- <text x="152" y="188" class="scr">cm</text>
- <text x="574" y="164" text-anchor="end" class="scr">68.9%</text>
- <text x="574" y="204" text-anchor="end" class="scr">7 804 L</text>
- <!-- bar: y=18..27, 68.9 % of 512 px -->
- <rect x="64" y="212" width="512" height="40" fill="none" stroke="#5a636e"/>
- <rect x="64" y="212" width="353" height="40" fill="#dfe6ee"/>
- <text x="70" y="286" class="scr">BAT 3.82V 74%</text>
- <text x="574" y="286" text-anchor="end" class="scr">-67 dBm</text>
- <text x="70" y="322" class="scr">AIR 31C 62%</text>
- <text x="574" y="322" text-anchor="end" class="scr">H2O 27C</text>
- <text x="70" y="358" class="scr">ECHO 90.0cm</text>
- <text x="574" y="358" text-anchor="end" class="scr">3 bad</text>
- <text x="320" y="388" text-anchor="middle" class="scrB">OK</text>
- <text x="34" y="146" class="ycoord">y=0</text>
- <text x="34" y="212" class="ycoord">y=18</text>
- <text x="34" y="266" class="ycoord">y=30</text>
- <text x="34" y="302" class="ycoord">y=39</text>
- <text x="34" y="338" class="ycoord">y=48</text>
- <text x="34" y="366" class="ycoord">y=56</text>
-</g>
-<text x="58" y="424" class="mod">oledDraw() — 128×64, driver in wlg_display.h (no library), 1 kB frame buffer</text>
-
-<!-- ================= SCREEN ROW CALLOUTS ================= -->
-<g>
- <rect x="612" y="134" width="286" height="274" class="boxA" rx="6"/>
- <text x="626" y="158" class="mod">row by row</text>
- <text x="626" y="180" class="md">y=0   level as a 2x number,</text>
- <text x="638" y="194" class="md">cm, %, litres (right)</text>
- <text x="626" y="214" class="md">y=18  bar 0…100 % of max_cm</text>
- <text x="626" y="234" class="md">y=30  battery V + %  …  RSSI</text>
- <text x="638" y="248" class="sm">NO WIFI when the STA link is down</text>
- <text x="626" y="268" class="md">y=39  box air T/RH … water T</text>
- <text x="638" y="282" class="sm">the condensation risk, and air T is</text>
- <text x="638" y="294" class="sm">what the speed-of-sound uses</text>
- <text x="626" y="314" class="md">y=48  what the sensor saw:</text>
- <text x="638" y="328" class="md">ECHO x cm  or  DP +x.x hPa</text>
- <text x="638" y="342" class="sm">right: rejected reads — a bare sensor</text>
- <text x="638" y="354" class="sm">lies slowly, the counter shows it</text>
- <text x="626" y="374" class="md">y=56  status word, centred</text>
- <text x="626" y="392" class="ok">an alarm inverts that band: the only</text>
- <text x="626" y="404" class="ok">way to shout on 128×64</text>
-</g>
-
-<!-- ================= APP STREAMS ================= -->
-<g>
- <rect x="920" y="134" width="286" height="274" class="boxB" rx="6"/>
- <text x="934" y="158" class="mod">Blynk datastreams</text>
- <text x="934" y="178" class="md">V1 level_pct      every sample</text>
- <text x="934" y="192" class="md">V8 status         on change</text>
- <text x="934" y="212" class="md">V0 level_cm V2 litres V4 vbat</text>
- <text x="934" y="224" class="sm">only when sampling ≥ 300 s apart</text>
- <text x="934" y="244" class="md">V5 air_t  V6 air_rh  V7 water_t</text>
- <text x="934" y="258" class="md">V9 rssi  V3 dist_cm</text>
- <text x="934" y="272" class="md">V14 V15 V16 pressures (build 2)</text>
- <text x="934" y="284" class="sm">the slow set: once an hour</text>
- <text x="934" y="308" class="md">written BY THE APP (sliders/switch):</text>
- <text x="934" y="322" class="md">V10 sample_s  V11 low_cm</text>
- <text x="934" y="336" class="md">V12 high_cm   V13 mute</text>
- <text x="934" y="352" class="ok">all four are read back on connect, so</text>
- <text x="934" y="364" class="ok">the app stays the master after a reboot</text>
- <text x="934" y="384" class="sm">17 of the 50 streams a free template allows</text>
-</g>
-
-<!-- ================= SCREEN RULES ================= -->
-<g>
- <rect x="34" y="440" width="560" height="226" class="boxC" rx="6"/>
- <text x="50" y="466" class="mod">Panel rules that come from the hardware, not taste</text>
- <text x="50" y="490" class="md">blanked after OLED_IDLE_S 120 s (0xAE), driver untouched</text>
- <text x="50" y="508" class="md">wake: button press, serial d, or any alarm change</text>
- <text x="50" y="526" class="md">#define OLED_IDLE_S 0 → never blank (mains-powered box)</text>
- <text x="50" y="548" class="warn">an SSD1306 in a roof box is unreadable in direct sun</text>
- <text x="50" y="564" class="md">contrast drifts with temperature; raise OLED_CONTRAST</text>
- <text x="50" y="580" class="md">heat + UV kill these panels in a hot box long before the ESP32</text>
- <text x="50" y="596" class="md">static digits burn in — which is why the default is blanking</text>
- <text x="50" y="618" class="md">D flips 180°, saved in NVS (the box may hang either way round)</text>
- <text x="50" y="636" class="sm">no OLED fitted / dead? boot says so once and the sketch carries on</text>
-</g>
-
-<!-- ================= MESSAGE BUDGET ================= -->
-<g>
- <rect x="612" y="440" width="594" height="226" class="boxR" rx="6"/>
- <text x="628" y="466" class="warn">the free plan limit that stops a gauge dead: 100 000 messages/month</text>
- <text x="628" y="490" class="md">sample    msgs/month   streams per sample</text>
- <text x="628" y="508" class="md">   60 s      ≈50 000     1 (V1) + hourly slow set</text>
- <text x="628" y="524" class="md">  300 s      ≈41 000     4 (V1 V0 V2 V4) + status on change</text>
- <text x="628" y="540" class="md">  900 s      ≈18 000     same 4 — 18 % of the quota ← deployment</text>
- <text x="628" y="562" class="md">below BLYNK_THROTTLE_S (300 s) the firmware drops to V1 + status</text>
- <text x="628" y="578" class="md">and says so once on serial. That is what keeps a 60 s bring-up run</text>
- <text x="628" y="594" class="md">from burning the whole month's quota in four days.</text>
- <text x="628" y="616" class="md">push/email events are a separate budget: 20 per hour on free, and</text>
- <text x="628" y="632" class="md">the firmware adds its own 30 min per-event cooldown on top.</text>
- <text x="628" y="650" class="sm">limits from docs.blynk.io/en/blynk.console/limits (read 2026-11-16)</text>
-<text x="628" y="664" class="sm">they change — re-check before you scale up</text>
-</g>
-
-<!-- ================= BOTTOM LEFT: what is NOT here ================= -->
-<g>
- <text x="34" y="690" class="sm">Nothing on this page can run the pump: no relay, no output pin for a motor, no cloud-side control of anything except thresholds, sample interval and buzzer mute.</text>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1040" viewBox="0 0 1240 1040" font-family="DejaVu Sans, Arial, sans-serif">
+<rect width="1240" height="1040" fill="#ffffff"/>
+<text x="40" y="34" font-size="22" font-weight="bold" fill="#12202e">04 - what it shows, what it shouts, what the app adds</text>
+<text x="40" y="56" font-size="12.5" fill="#6b7480">The OLED, buzzer, LED and web page are local-first: with no Blynk token, no Wi-Fi and no cloud the gauge still measures, displays and alarms.</text>
+<text x="40" y="73" font-size="12.5" fill="#6b7480">Blynk is additive, and one rule protects the free plan: V1 (percent) is written every sample and everything else is throttled.</text>
+<rect x="34" y="124" width="532" height="274" fill="#22282e" stroke="#12202e" stroke-width="1.4" rx="10"/>
+<rect x="40" y="130" width="520" height="262" fill="#0d1116" stroke="#3a4450" stroke-width="1" rx="2"/>
+<text x="66" y="222" font-size="84" fill="#e8f0f8" font-weight="bold" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">118</text>
+<text x="280" y="222" font-size="28" fill="#e8f0f8" font-weight="bold" text-anchor="start">cm</text>
+<text x="540" y="172" font-size="27" fill="#e8f0f8" font-weight="bold" text-anchor="end">96.8%</text>
+<text x="540" y="208" font-size="21" fill="#e8f0f8" font-weight="bold" text-anchor="end">10962 L</text>
+<rect x="48" y="236" width="504" height="16" fill="#2b333b" stroke="#4a5560" stroke-width="1" rx="2"/>
+<rect x="48" y="236" width="487.87199999999996" height="16" fill="#e8f0f8" stroke="#e8f0f8" stroke-width="1" rx="2"/>
+<text x="50" y="272" font-size="16" fill="#e8f0f8" font-weight="bold" text-anchor="start">BAT 4.02V 82%</text>
+<text x="550" y="272" font-size="14" fill="#e8f0f8" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="end">-54 dBm</text>
+<text x="50" y="302" font-size="15" fill="#e8f0f8" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">ECHO 33.8</text>
+<text x="550" y="302" font-size="15" fill="#e8f0f8" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="end">SPAN 121.9</text>
+<text x="50" y="328" font-size="15" fill="#e8f0f8" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">GATE 25.0 T30C</text>
+<text x="550" y="328" font-size="15" fill="#e8f0f8" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="end">4 bad</text>
+<rect x="44" y="340" width="512" height="44" fill="#e8f0f8" stroke="#e8f0f8" stroke-width="1" rx="2"/>
+<text x="300.0" y="370" font-size="26" fill="#0d1116" font-weight="bold" text-anchor="middle">FULL - OVERFLOW</text>
+<text x="40" y="432.0" font-size="13.5" fill="#12202e" font-weight="bold" text-anchor="start">Panel rows, 128 x 64, 0.96 in</text>
+<text x="40" y="454.0" font-size="11.5" fill="#12202e" text-anchor="start">big: level in cm, top right: percent then litres</text>
+<text x="40" y="470.0" font-size="11.5" fill="#12202e" text-anchor="start">bar: percent of span, 10 px tall on the real panel</text>
+<text x="40" y="486.0" font-size="11.5" fill="#12202e" text-anchor="start">BAT rail voltage and percent, then RSSI or NO WIFI</text>
+<text x="40" y="502.0" font-size="11.5" fill="#12202e" text-anchor="start">ECHO is the filtered distance the module measured in cm, SPAN the</text>
+<text x="40" y="518.0" font-size="11.5" fill="#12202e" text-anchor="start">calibrated span, GATE the blind gate, T30C the configured air temperature</text>
+<text x="40" y="534.0" font-size="11.5" fill="#12202e" text-anchor="start">that sets sound speed, and the right field counts rejected pings</text>
+<text x="40" y="550.0" font-size="11.5" fill="#12202e" text-anchor="start">bottom band is the status string, inverted while any alarm is on</text>
+<text x="40" y="566.0" font-size="11.5" fill="#12202e" text-anchor="start">blanked after OLED_IDLE_S (120 s) idle; the button wakes it</text>
+<rect x="600" y="130" width="600" height="34" fill="#eef4fa" stroke="#12202e" stroke-width="1.4" rx="6"/>
+<text x="614" y="152.0" font-size="13.5" fill="#12202e" font-weight="bold" text-anchor="start">Status strings and local alarms, no cloud involved</text>
+<text x="600" y="184.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">OLED status line</text>
+<text x="830" y="184.0" font-size="11.5" fill="#12202e" text-anchor="start">what sets it</text>
+<text x="600" y="202.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">LOW LEVEL</text>
+<text x="830" y="202.0" font-size="11.5" fill="#12202e" text-anchor="start">level < low_cm, default 24 cm</text>
+<text x="600" y="220.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">FULL - OVERFLOW</text>
+<text x="830" y="220.0" font-size="11.5" fill="#12202e" text-anchor="start">level > high_cm, default 110 cm</text>
+<text x="600" y="238.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">SENSOR FAULT</text>
+<text x="830" y="238.0" font-size="11.5" fill="#12202e" text-anchor="start">3 hard rejects in a row</text>
+<text x="600" y="256.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">MANY BAD READS</text>
+<text x="830" y="256.0" font-size="11.5" fill="#12202e" text-anchor="start">over 25% of pings rejected</text>
+<text x="600" y="274.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">NO ECHO / OUT OF RANGE</text>
+<text x="830" y="274.0" font-size="11.5" fill="#12202e" text-anchor="start">nothing back, or back after 40 ms</text>
+<text x="600" y="292.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">NEAR-BLIND / DEW ON FACE</text>
+<text x="830" y="292.0" font-size="11.5" fill="#12202e" text-anchor="start">an echo inside the 25 cm gate</text>
+<text x="600" y="310.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">WARMING UP</text>
+<text x="830" y="310.0" font-size="11.5" fill="#12202e" text-anchor="start">fewer than 3 samples taken yet</text>
+<text x="600" y="354.0" font-size="11.5" fill="#6b7480" text-anchor="start">The four Blynk events are level_low, level_high, sensor_fault and level_ok. Clearing</text>
+<text x="600" y="368.5" font-size="11.5" fill="#6b7480" text-anchor="start">is hysteretic at 2 cm (ALARM_HYST_CM) and the push is rate limited to one per event</text>
+<text x="600" y="383.0" font-size="11.5" fill="#6b7480" text-anchor="start">per 30 min (ALARM_COOLDOWN_S 1800).</text>
+<rect x="600" y="400" width="600" height="34" fill="#eef4fa" stroke="#12202e" stroke-width="1.4" rx="6"/>
+<text x="614" y="422.0" font-size="13.5" fill="#12202e" font-weight="bold" text-anchor="start">What the operator does</text>
+<text x="600" y="454.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">short press</text>
+<text x="770" y="454.0" font-size="11.5" fill="#12202e" text-anchor="start">wakes the OLED, snoozes one 9 s period</text>
+<text x="600" y="472.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">long press, 1.5 s</text>
+<text x="770" y="472.0" font-size="11.5" fill="#12202e" text-anchor="start">mute latch in NVS; also j or app V13</text>
+<text x="600" y="490.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">LED, GPIO14</text>
+<text x="770" y="490.0" font-size="11.5" fill="#12202e" text-anchor="start">toggles every 1.5 s, solid on full alarm</text>
+<text x="600" y="508.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">buzzer, GPIO13</text>
+<text x="770" y="508.0" font-size="11.5" fill="#12202e" text-anchor="start">250 ms every 9 s: 1.8 kHz low, else 2.6 kHz</text>
+<rect x="40" y="580" width="560" height="34" fill="#eef4fa" stroke="#12202e" stroke-width="1.4" rx="6"/>
+<text x="54" y="602.0" font-size="13.5" fill="#12202e" font-weight="bold" text-anchor="start">Blynk template: 13 streams, 4 events</text>
+<text x="40" y="634.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V0</text>
+<text x="110" y="634.0" font-size="11.5" fill="#12202e" text-anchor="start">level_cm</text>
+<text x="270" y="634.0" font-size="11.5" fill="#12202e" text-anchor="start">every sample if slow</text>
+<text x="40" y="652.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V1</text>
+<text x="110" y="652.0" font-size="11.5" fill="#12202e" text-anchor="start">level_pct</text>
+<text x="270" y="652.0" font-size="11.5" fill="#12202e" text-anchor="start">every sample, always</text>
+<text x="40" y="670.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V2</text>
+<text x="110" y="670.0" font-size="11.5" fill="#12202e" text-anchor="start">litres</text>
+<text x="270" y="670.0" font-size="11.5" fill="#12202e" text-anchor="start">every sample if slow</text>
+<text x="40" y="688.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V3</text>
+<text x="110" y="688.0" font-size="11.5" fill="#12202e" text-anchor="start">dist_cm</text>
+<text x="270" y="688.0" font-size="11.5" fill="#12202e" text-anchor="start">hourly</text>
+<text x="40" y="706.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V4</text>
+<text x="110" y="706.0" font-size="11.5" fill="#12202e" text-anchor="start">vbat</text>
+<text x="270" y="706.0" font-size="11.5" fill="#12202e" text-anchor="start">every sample if slow</text>
+<text x="40" y="724.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V8</text>
+<text x="110" y="724.0" font-size="11.5" fill="#12202e" text-anchor="start">status text</text>
+<text x="270" y="724.0" font-size="11.5" fill="#12202e" text-anchor="start">only on change</text>
+<text x="40" y="742.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V9</text>
+<text x="110" y="742.0" font-size="11.5" fill="#12202e" text-anchor="start">rssi</text>
+<text x="270" y="742.0" font-size="11.5" fill="#12202e" text-anchor="start">hourly</text>
+<text x="40" y="760.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V10</text>
+<text x="110" y="760.0" font-size="11.5" fill="#12202e" text-anchor="start">sample_s</text>
+<text x="270" y="760.0" font-size="11.5" fill="#12202e" text-anchor="start">written by the app</text>
+<text x="40" y="778.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V11</text>
+<text x="110" y="778.0" font-size="11.5" fill="#12202e" text-anchor="start">low_cm</text>
+<text x="270" y="778.0" font-size="11.5" fill="#12202e" text-anchor="start">written by the app</text>
+<text x="40" y="796.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V12</text>
+<text x="110" y="796.0" font-size="11.5" fill="#12202e" text-anchor="start">high_cm</text>
+<text x="270" y="796.0" font-size="11.5" fill="#12202e" text-anchor="start">written by the app</text>
+<text x="40" y="814.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V13</text>
+<text x="110" y="814.0" font-size="11.5" fill="#12202e" text-anchor="start">mute</text>
+<text x="270" y="814.0" font-size="11.5" fill="#12202e" text-anchor="start">written by the app</text>
+<text x="40" y="832.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V14</text>
+<text x="110" y="832.0" font-size="11.5" fill="#12202e" text-anchor="start">bad_pct</text>
+<text x="270" y="832.0" font-size="11.5" fill="#12202e" text-anchor="start">hourly</text>
+<text x="40" y="850.0" font-size="11.5" fill="#6b7480" font-family="DejaVu Sans Mono, Consolas, monospace" text-anchor="start">V15</text>
+<text x="110" y="850.0" font-size="11.5" fill="#12202e" text-anchor="start">uptime_h</text>
+<text x="270" y="850.0" font-size="11.5" fill="#12202e" text-anchor="start">hourly</text>
+<text x="430" y="634.0" font-size="11.5" fill="#8c1c13" text-anchor="start">V5 V6 V7 V16 were the</text>
+<text x="430" y="648.5" font-size="11.5" fill="#8c1c13" text-anchor="start">air, water and</text>
+<text x="430" y="663.0" font-size="11.5" fill="#8c1c13" text-anchor="start">barometric streams of</text>
+<text x="430" y="677.5" font-size="11.5" fill="#8c1c13" text-anchor="start">rev A. Delete them in</text>
+<text x="430" y="692.0" font-size="11.5" fill="#8c1c13" text-anchor="start">the template; do not</text>
+<text x="430" y="706.5" font-size="11.5" fill="#8c1c13" text-anchor="start">renumber the rest.</text>
+<text x="430" y="730.0" font-size="11.5" fill="#12202e" text-anchor="start">Events: level_low,</text>
+<text x="430" y="744.5" font-size="11.5" fill="#12202e" text-anchor="start">level_high,</text>
+<text x="430" y="759.0" font-size="11.5" fill="#12202e" text-anchor="start">sensor_fault,</text>
+<text x="430" y="773.5" font-size="11.5" fill="#12202e" text-anchor="start">level_ok</text>
+<text x="430" y="810.0" font-size="11.5" fill="#6b7480" text-anchor="start">Free plan: 100 000</text>
+<text x="430" y="824.5" font-size="11.5" fill="#6b7480" text-anchor="start">device messages per</text>
+<text x="430" y="839.0" font-size="11.5" fill="#6b7480" text-anchor="start">month. 300 s sampling</text>
+<text x="430" y="853.5" font-size="11.5" fill="#6b7480" text-anchor="start">is about 38 000, 60 s</text>
+<text x="430" y="868.0" font-size="11.5" fill="#6b7480" text-anchor="start">about 45 000, 900 s</text>
+<text x="430" y="882.5" font-size="11.5" fill="#6b7480" text-anchor="start">about 15 000.</text>
+<rect x="640" y="580" width="240" height="360" fill="#eef4fa" stroke="#12202e" stroke-width="1.6" rx="14"/>
+<text x="760" y="616" font-size="15" fill="#12202e" font-weight="bold" text-anchor="middle">Water tank</text>
+<line x1="660" y1="630" x2="860" y2="630" stroke="#cfd8e2" stroke-width="1" stroke-linecap="round"/>
+<rect x="660" y="646" width="200" height="96" fill="#ffffff" stroke="#cfd8e2" stroke-width="1.2" rx="8"/>
+<text x="760" y="690" font-size="30" fill="#0b5cad" font-weight="bold" text-anchor="middle">96.8%</text>
+<text x="760" y="714" font-size="11" fill="#6b7480" text-anchor="middle">level, V1</text>
+<rect x="660" y="756" width="96" height="76" fill="#ffffff" stroke="#cfd8e2" stroke-width="1.2" rx="8"/>
+<text x="708" y="790" font-size="18" fill="#12202e" font-weight="bold" text-anchor="middle">10962</text>
+<text x="708" y="810" font-size="11" fill="#6b7480" text-anchor="middle">litres</text>
+<rect x="764" y="756" width="96" height="76" fill="#ffffff" stroke="#cfd8e2" stroke-width="1.2" rx="8"/>
+<text x="812" y="790" font-size="16" fill="#12202e" font-weight="bold" text-anchor="middle">4.02 V</text>
+<text x="812" y="810" font-size="11" fill="#6b7480" text-anchor="middle">V4</text>
+<rect x="660" y="846" width="200" height="56" fill="#f6dede" stroke="#8c1c13" stroke-width="1.2" rx="8"/>
+<text x="760" y="868" font-size="14" fill="#8c1c13" font-weight="bold" text-anchor="middle">FULL - OVERFLOW</text>
+<text x="760" y="886" font-size="11" fill="#8c1c13" text-anchor="middle">push, once per 30 min</text>
+<rect x="920" y="580" width="280" height="34" fill="#eef4fa" stroke="#12202e" stroke-width="1.4" rx="6"/>
+<text x="934" y="602.0" font-size="13.5" fill="#12202e" font-weight="bold" text-anchor="start">LAN, no cloud</text>
+<text x="920" y="616.0" font-size="11.5" fill="#12202e" text-anchor="start">http://<ip>/ live page, 2 s refresh</text>
+<text x="920" y="648.0" font-size="11.5" fill="#12202e" text-anchor="start">/api/state  JSON snapshot</text>
+<text x="920" y="672.0" font-size="11.5" fill="#12202e" text-anchor="start">/api/log  force one sample now</text>
+<text x="920" y="696.0" font-size="11.5" fill="#12202e" text-anchor="start">/api/scan  Wi-Fi survey, SSID,RSSI</text>
+<text x="920" y="730.0" font-size="11.5" fill="#6b7480" text-anchor="start">Keys include echo_us, echo_reason,</text>
+<text x="920" y="762.0" font-size="11.5" fill="#6b7480" text-anchor="start">gate_cm, span_cm, n_near, n_noecho,</text>
+<text x="920" y="778.0" font-size="11.5" fill="#6b7480" text-anchor="start">n_far, bad, dist_cm, sound_mms</text>
+<text x="920" y="812.0" font-size="11.5" fill="#6b7480" text-anchor="start">Open it on a phone on the same SSID:</text>
+<text x="920" y="828.0" font-size="11.5" fill="#6b7480" text-anchor="start">no Blynk, no port forwarding.</text>
+<rect x="640" y="920" width="560" height="107.5" fill="#fdf6f4" stroke="#8c1c13" stroke-width="1.6" rx="6"/>
+<text x="654" y="944" font-size="14" fill="#8c1c13" font-weight="bold" text-anchor="start">Measured, not guessed</text>
+<text x="654" y="966.0" font-size="12.5" fill="#12202e" text-anchor="start">Blynk costs +748 B flash and +152 B RAM with a blank token: it is</text>
+<text x="654" y="984.5" font-size="12.5" fill="#12202e" text-anchor="start">deliberately compiled in and switched off at runtime, so keep the</text>
+<text x="654" y="1003.0" font-size="12.5" fill="#12202e" text-anchor="start">include visible or the library auto-discovery quietly drops it.</text>
 </svg>
