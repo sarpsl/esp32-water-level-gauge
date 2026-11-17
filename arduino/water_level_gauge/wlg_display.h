@@ -2,8 +2,12 @@
  *  wlg_display.h — SSD1306 128×64 I2C OLED driver, no external library.
  *
  *  Drives the 0.96" / 1.3" modules everyone buys (SSD1306 + 4 pin header:
- *  VCC, GND, SDA, SCL). It hangs off the SAME two wires as the pressure
- *  sensors: OLED 0x3C (or 0x3D), BMP/BME280 0x76 / 0x77 — no address clash.
+ *  VCC, GND, SDA, SCL) on GPIO21/22 — the same pair the reference project uses.
+ *  I2C is not really needed by anything else in this build (the SR04M talks TRIG
+ *  and ECHO, not a bus), so the bus exists for the panel alone: 0x3C, or 0x3D on
+ *  some panels, auto-probed at boot. GPIO21/22 have no internal pull-ups on the
+ *  DevKitC — cheap modules ship the resistors on the board, so this works, but a
+ *  bare SSD1306 break-out with none may need 4.7 k to 3V3 on each line.
  *
  *  Why hand-rolled: the sketch's promise is that it compiles with only the
  *  ESP32 core installed. The Adafruit stack (GFX + BusIO + SSD1306) is three
