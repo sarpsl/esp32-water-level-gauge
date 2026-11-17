@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="900" viewBox="0 0 1420 900" font-family="DejaVu Sans, Arial, sans-serif">
+<defs>
+ <style>
+  .ttl{font-size:22px;font-weight:700;fill:#111}
+  .sub{font-size:13px;fill:#555}
+  .mod{font-size:14px;font-weight:700;fill:#111}
+  .md{font-size:12px;font-family:DejaVu Sans Mono,monospace;fill:#222}
+  .sm{font-size:11.5px;fill:#666}
+  .ok{font-size:12px;font-weight:700;fill:#0b7d3f}
+  .warn{font-size:12.5px;font-weight:700;fill:#a30000}
+  .blk{fill:#fffdf3;stroke:#333;stroke-width:1.5}
+  .alt{fill:#eef6ff;stroke:#0b5cad;stroke-width:1.4;stroke-dasharray:6 4}
+  .arr{stroke:#333;stroke-width:2;fill:none}
+  .arrb{stroke:#d12b2b;stroke-width:2.4;fill:none}
+  .head{font-size:16px;font-weight:700;fill:#111}
+ </style>
+</defs>
+<rect width="1420" height="900" fill="#fff"/>
+<text x="30" y="38" class="ttl">Power: phase 0 (bench) → phase 1 (battery + solar, the real design)</text>
+<text x="30" y="60" class="sub">Currents are measured-style estimates for an ESP32-WROOM-32 with modem sleep enabled and WiFi kept connected, one ultrasonic ping every 30 s.</text>
+
+<!-- ============ PHASE 0 ============ -->
+<text x="40" y="106" class="head">Phase 0 — what you run today</text>
+<g>
+ <rect x="40" y="126" width="140" height="60" class="blk" rx="5"/><text x="110" y="152" text-anchor="middle" class="mod">USB-C</text><text x="110" y="170" text-anchor="middle" class="sm">5 V, 500 mA+</text>
+ <rect x="230" y="126" width="180" height="60" class="blk" rx="5"/><text x="320" y="152" text-anchor="middle" class="mod">DevKit VIN</text><text x="320" y="170" text-anchor="middle" class="sm">AMS1117 3.3 V LDO</text>
+ <rect x="460" y="126" width="120" height="60" class="blk" rx="5"/><text x="520" y="152" text-anchor="middle" class="mod">3V3</text><text x="520" y="170" text-anchor="middle" class="sm">ESP32 + sensors</text>
+ <rect x="640" y="126" width="150" height="60" class="blk" rx="5"/><text x="715" y="152" text-anchor="middle" class="mod">VIN 5 V</text><text x="715" y="170" text-anchor="middle" class="sm">ultrasonic only</text>
+ <path d="M180 156 H230" class="arrb"/><path d="M410 156 H460" class="arr"/><path d="M320 186 V210 H640 V186" class="arrb"/>
+ <text x="186" y="148" class="sm">5 V</text><text x="416" y="148" class="sm">3.3 V</text>
+</g>
+<g>
+ <rect x="40" y="210" width="750" height="96" rx="6" fill="#f4f8ff" stroke="#0b5cad" stroke-width="1.4"/>
+ <text x="56" y="234" class="mod">LDO heat reality check</text>
+ <text x="56" y="256" class="md">average board current ≈ 20–25 mA  →  (5 − 3.3) V × 22 mA ≈ 40 mW  → the AMS1117 is fine</text>
+ <text x="56" y="276" class="md">WiFi TX bursts hit 240 mA ≈ 0.4 W for milliseconds; put the board against copper/vent, not foam</text>
+ <text x="56" y="296" class="sm">powering through VIN is fine. 3V3 fed externally is an option, not a must.</text>
+</g>
+
+<!-- ============ PHASE 1 ============ -->
+<text x="40" y="356" class="head">Phase 1 — final carrier board</text>
+<g>
+ <rect x="40" y="380" width="150" height="70" class="blk" rx="5"/>
+ <text x="115" y="406" text-anchor="middle" class="mod">6 V panel</text><text x="115" y="424" text-anchor="middle" class="sm">2–6 W, on the lid</text><text x="115" y="440" text-anchor="middle" class="sm">SS34 reverse diode</text>
+
+ <rect x="240" y="380" width="180" height="70" class="blk" rx="5"/>
+ <text x="330" y="402" text-anchor="middle" class="mod">18650 charger</text>
+ <text x="330" y="420" text-anchor="middle" class="sm">CN3791 (6–28 V in)</text>
+ <text x="330" y="436" text-anchor="middle" class="sm">or TP4056 + 5 V pre-reg</text>
+ <text x="330" y="466" text-anchor="middle" class="sm">CC/CV 4.20 V, 0.5–1 A</text>
+
+ <rect x="470" y="380" width="180" height="70" class="blk" rx="5"/>
+ <text x="560" y="402" text-anchor="middle" class="mod">18650 × 2 parallel</text>
+ <text x="560" y="420" text-anchor="middle" class="sm">protected cells + 1.5 A PTC</text>
+ <text x="560" y="436" text-anchor="middle" class="sm">matched pair, same batch</text>
+ <text x="560" y="466" text-anchor="middle" class="sm">3.0–4.2 V, ≈6 Ah</text>
+
+ <rect x="700" y="380" width="190" height="70" class="blk" rx="5"/>
+ <text x="795" y="402" text-anchor="middle" class="mod">boost 5 V</text>
+ <text x="795" y="420" text-anchor="middle" class="sm">TPS61023 (18 µA IQ)</text>
+ <text x="795" y="436" text-anchor="middle" class="sm">cheap alt: MT3608 module</text>
+ <text x="795" y="466" text-anchor="middle" class="sm">battery is always &lt; 5 V</text>
+
+ <rect x="940" y="380" width="170" height="70" class="blk" rx="5"/>
+ <text x="1025" y="402" text-anchor="middle" class="mod">DevKit VIN</text>
+ <text x="1025" y="420" text-anchor="middle" class="sm">on-board AMS1117 → 3V3</text>
+ <text x="1025" y="436" text-anchor="middle" class="sm">ESP32, BME280, DS18B20</text>
+
+ <rect x="1160" y="380" width="220" height="70" class="blk" rx="5"/>
+ <text x="1270" y="402" text-anchor="middle" class="mod">sensor rail (opt)</text>
+ <text x="1270" y="420" text-anchor="middle" class="sm">TPS22919 load switch on 5 V,</text>
+ <text x="1270" y="436" text-anchor="middle" class="sm">only powered during the 100 ms ping</text>
+ <text x="1270" y="452" text-anchor="middle" class="sm">kills the sensor's 15 mA standing draw</text>
+
+ <path d="M190 415 H240" class="arr"/><path d="M420 415 H470" class="arr"/>
+ <path d="M650 415 H700" class="arrb"/><path d="M890 415 H940" class="arrb"/>
+ <path d="M890 440 H915 V470 H1160 V450" class="arr"/>
+ <text x="196" y="408" class="sm">6 V</text><text x="426" y="408" class="sm">4.2 V</text>
+ <text x="656" y="408" class="sm">3.0–4.2 V</text><text x="896" y="408" class="sm">5.00 V</text>
+ <text x="950" y="360" class="sm"></text>
+</g>
+<g>
+ <rect x="40" y="480" width="900" height="120" rx="6" fill="#fffdf3" stroke="#8a6a2f" stroke-width="1.4"/>
+ <text x="56" y="504" class="mod">Battery monitoring and protection</text>
+ <text x="56" y="526" class="md">GPIO36 ← 1 MΩ / 1 MΩ divider ← battery+  (measure under load, not float voltage)</text>
+ <text x="56" y="546" class="md">low battery: EN brownout ≈2.9 V → warn at 3.45 V, stop pinging at 3.30 V</text>
+ <text x="56" y="566" class="md">the charger must never be the only source: a flat cell sags below brownout on a TX burst</text>
+ <text x="56" y="586" class="sm">470 µF bulk on the 5 V rail, 100 µF at the ultrasonic: the boost needs headroom for TX bursts</text>
+</g>
+
+<!-- ============ consumption table ============ -->
+<text x="40" y="650" class="head">How long it runs — this is the choice you have to make</text>
+<g>
+ <rect x="40" y="670" width="660" height="200" rx="6" fill="#f7f8fa" stroke="#333" stroke-width="1.4"/>
+ <text x="56" y="694" class="md">mode                            avg current   1× 18650    2× 18650    web page</text>
+ <text x="56" y="716" class="md">WiFi always on, ping every 30 s   20–25 mA      5–6 days    11–12 days  live</text>
+ <text x="56" y="736" class="md">WiFi always on, ping every 5 min  19–22 mA      6 days      12 days     live</text>
+ <text x="56" y="756" class="md">light sleep + ping every 5 min    4–8 mA        2–4 weeks   4–8 weeks   live</text>
+ <text x="56" y="776" class="md">deep sleep, wake every 15 min      0.15–0.4 mA  6–12 months  1–2 years  stale page</text>
+ <text x="56" y="802" class="ok">solar makes this a non-decision: a 2 W panel ≈ 8 Wh/day ≈ enough for ≈100× the always-on budget</text>
+ <text x="56" y="824" class="md">load = 3.7 V × 22 mA ≈ 0.081 W ≈ 2 Wh/day; a 6 W panel, 4 sun-hours ≈ 24 Wh/day</text>
+ <text x="56" y="846" class="md">OLED lit ≈3–8 mA; blanked (0xAE) = 0 mA — hence OLED_IDLE_S 120 s</text>
+ <text x="56" y="866" class="sm">two 18650 in parallel + a small panel on the lid = years of autonomy, no charging chore</text>
+</g>
+<g>
+ <rect x="724" y="670" width="656" height="200" rx="6" fill="#fff4f4" stroke="#a30000" stroke-width="1.6"/>
+ <text x="740" y="694" class="warn">Two things that kill battery designs — build against both</text>
+ <text x="740" y="718" class="md">1. modem sleep OFF (WiFi.setSleep(false)) costs 60–95 mA continuously — a 10× penalty</text>
+ <text x="740" y="738" class="md">2. a 5 V rail that always switches: MT3608 alone burns ≈1 mA = 4× the ESP32 idle</text>
+ <text x="740" y="762" class="md">measure it: put a µA meter in series with the battery, read the average for 5 minutes</text>
+ <text x="740" y="782" class="md">if you never measure it, the table on the left is just a guess.</text>
+ <text x="740" y="806" class="mod">Recommendation for phase 1</text>
+ <text x="740" y="828" class="md">always-on WiFi + 30 s sampling + 2× 18650 + a 6 W panel. Simple, live web page,</text>
+ <text x="740" y="848" class="md">the panel refills the battery with a 10× margin, and it survives rain weeks.</text>
+</g>
+<g>
+ <rect x="970" y="480" width="410 " height="120" rx="6" class="alt"/>
+ <text x="986" y="504" class="mod">Optional upgrade (deep-sleep builds only)</text>
+ <text x="986" y="528" class="md">• TPS63000 buck-boost into the 3V3 pin, LDO removed</text>
+ <text x="986" y="548" class="md">• boost + sensor rail switched off between pings</text>
+ <text x="986" y="568" class="md">• no amber regulator LEDs, no AMS1117 in a sealed box</text>
+ <text x="986" y="588" class="sm">worth ≈10–15 mA. Skip it on a solar design.</text>
+</g>
+</svg>

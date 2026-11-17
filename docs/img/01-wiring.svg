@@ -1,0 +1,278 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="1060" viewBox="0 0 1420 1060" font-family="DejaVu Sans, Arial, sans-serif">
+<defs>
+ <style>
+  .ttl{font-size:23px;font-weight:700;fill:#111}
+  .sub{font-size:13px;fill:#555}
+  .mod{font-size:15px;font-weight:700;fill:#111}
+  .md{font-size:12.5px;fill:#222;font-family:DejaVu Sans Mono,monospace}
+  .sm{font-size:11.5px;fill:#666}
+  .pinU{font-size:13px;font-family:DejaVu Sans Mono,monospace;font-weight:700;fill:#000}
+  .pinN{font-size:12px;font-family:DejaVu Sans Mono,monospace;fill:#9aa0a6}
+  .pinX{font-size:12px;font-family:DejaVu Sans Mono,monospace;font-weight:700;fill:#c0392b}
+  .net{font-size:11.5px;font-family:DejaVu Sans Mono,monospace;font-weight:700;fill:#0b5cad}
+  .warn{font-size:13.5px;font-weight:700;fill:#a30000}
+  .hd{font-size:12.5px;font-weight:700;fill:#333}
+  .modb{fill:#fffdf3;stroke:#333;stroke-width:1.6;}
+  .board{fill:#f7f8fa;stroke:#333;stroke-width:2}
+  .used{fill:#0b7d3f}
+  .stubU{stroke:#0b7d3f;stroke-width:2.4}
+  .stubN{stroke:#c8ccd2;stroke-width:1.4}
+  .stubX{stroke:#c0392b;stroke-width:1.6}
+ </style>
+</defs>
+<rect width="1420" height="1060" fill="#fff"/>
+<text x="34" y="40" class="ttl">Phase 0 wiring map — ESP32-WROOM-32 DevKitC V1 (38-pin, CP2102)</text>
+<text x="34" y="62" class="sub">Green pins = used by the sketch. Grey = present but unused. Red = NEVER wire. Nets are matched by name: each module box lists the net it needs.</text>
+<text x="34" y="82" class="sub">Optional local alarm parts (OLED, piezo, button) are drawn too. Blynk / the phone app adds NO wiring at all — it is the same board.</text>
+
+<!-- ================= BOARD ================= -->
+<g>
+ <rect x="600" y="110" width="230" height="580" class="board" rx="8"/>
+ <text x="715" y="136" text-anchor="middle" class="mod">ESP32 DevKitC V1</text>
+ <text x="715" y="154" text-anchor="middle" class="sm">38 pins · USB-C + CP2102</text>
+ <rect x="655" y="162" width="120" height="30" fill="#fffbe6" stroke="#c9a227" stroke-dasharray="5 4" rx="3"/>
+ <text x="715" y="181" text-anchor="middle" class="sm" fill="#8a6d00">PCB antenna — keep clear</text>
+</g>
+<!-- LEFT column (pins 1..19, top→bottom) -->
+<g>
+ <text x="612" y="220" class="pinU">3V3</text><line x1="600" y1="216" x2="560" y2="216" class="stubU"/>
+ <text x="612" y="249" class="pinN">EN</text><line x1="600" y1="245" x2="582" y2="245" class="stubN"/>
+ <text x="612" y="278" class="pinU">36  VBAT</text><line x1="600" y1="274" x2="560" y2="274" class="stubU"/>
+ <text x="612" y="307" class="pinN">39</text><line x1="600" y1="303" x2="582" y2="303" class="stubN"/>
+ <text x="612" y="336" class="pinN">34</text><line x1="600" y1="332" x2="582" y2="332" class="stubN"/>
+ <text x="612" y="365" class="pinN">35</text><line x1="600" y1="361" x2="582" y2="361" class="stubN"/>
+ <text x="612" y="394" class="pinN">32</text><line x1="600" y1="390" x2="582" y2="390" class="stubN"/>
+ <text x="612" y="423" class="pinU">33  LVL_ANA</text><line x1="600" y1="419" x2="560" y2="419" class="stubU"/>
+ <text x="612" y="452" class="pinU">25  TRIG</text><line x1="600" y1="448" x2="560" y2="448" class="stubU"/>
+ <text x="612" y="481" class="pinU">26  ECHO</text><line x1="600" y1="477" x2="560" y2="477" class="stubU"/>
+ <text x="612" y="510" class="pinU">27  ONEWIRE</text><line x1="600" y1="506" x2="560" y2="506" class="stubU"/>
+ <text x="612" y="539" class="pinN">14</text><line x1="600" y1="535" x2="582" y2="535" class="stubN"/>
+ <text x="612" y="568" class="pinN">12</text><line x1="600" y1="564" x2="582" y2="564" class="stubN"/>
+ <text x="612" y="597" class="pinU">GND</text><line x1="600" y1="593" x2="560" y2="593" class="stubU"/>
+ <text x="612" y="626" class="pinN">13</text><line x1="600" y1="622" x2="582" y2="622" class="stubN"/>
+ <text x="612" y="655" class="pinX">9  ✗ flash</text><line x1="600" y1="651" x2="578" y2="651" class="stubX"/>
+ <text x="612" y="684" class="pinX">10 ✗ flash</text><line x1="600" y1="680" x2="578" y2="680" class="stubX"/>
+ <text x="612" y="713" class="pinX">11 ✗ flash</text><line x1="600" y1="709" x2="578" y2="709" class="stubX"/>
+ <text x="612" y="742" class="pinU">VIN  5V-in</text><line x1="600" y1="738" x2="560" y2="738" class="stubU"/>
+</g>
+<!-- RIGHT column (pins 20..38) -->
+<g>
+ <text x="818" y="220" text-anchor="end" class="pinU">GND</text><line x1="830" y1="216" x2="870" y2="216" class="stubU"/>
+ <text x="818" y="249" text-anchor="end" class="pinU">23  BTN</text><line x1="830" y1="245" x2="870" y2="245" class="stubU"/>
+ <text x="818" y="278" text-anchor="end" class="pinU">22  SCL</text><line x1="830" y1="274" x2="870" y2="274" class="stubU"/>
+ <text x="818" y="307" text-anchor="end" class="pinN">1  TX0</text><line x1="830" y1="303" x2="848" y2="303" class="stubN"/>
+ <text x="818" y="336" text-anchor="end" class="pinN">3  RX0</text><line x1="830" y1="332" x2="848" y2="332" class="stubN"/>
+ <text x="818" y="365" text-anchor="end" class="pinU">21  SDA</text><line x1="830" y1="361" x2="870" y2="361" class="stubU"/>
+ <text x="818" y="394" text-anchor="end" class="pinN">GND</text><line x1="830" y1="390" x2="848" y2="390" class="stubN"/>
+ <text x="818" y="423" text-anchor="end" class="pinU">19  FLOW</text><line x1="830" y1="419" x2="870" y2="419" class="stubU"/>
+ <text x="818" y="452" text-anchor="end" class="pinU">18  LED</text><line x1="830" y1="448" x2="870" y2="448" class="stubU"/>
+ <text x="818" y="481" text-anchor="end" class="pinN">5</text><line x1="830" y1="477" x2="848" y2="477" class="stubN"/>
+ <text x="818" y="510" text-anchor="end" class="pinU">17  BUZZ</text><line x1="830" y1="506" x2="870" y2="506" class="stubU"/>
+ <text x="818" y="539" text-anchor="end" class="pinN">16</text><line x1="830" y1="535" x2="848" y2="535" class="stubN"/>
+ <text x="818" y="568" text-anchor="end" class="pinN">4</text><line x1="830" y1="564" x2="848" y2="564" class="stubN"/>
+ <text x="818" y="597" text-anchor="end" class="pinN">0</text><line x1="830" y1="593" x2="848" y2="593" class="stubN"/>
+ <text x="818" y="626" text-anchor="end" class="pinN">2</text><line x1="830" y1="622" x2="848" y2="622" class="stubN"/>
+ <text x="818" y="655" text-anchor="end" class="pinN">15</text><line x1="830" y1="651" x2="848" y2="651" class="stubN"/>
+ <text x="818" y="684" text-anchor="end" class="pinX">8 ✗ flash</text><line x1="830" y1="680" x2="852" y2="680" class="stubX"/>
+ <text x="818" y="713" text-anchor="end" class="pinX">7 ✗ flash</text><line x1="830" y1="709" x2="852" y2="709" class="stubX"/>
+ <text x="818" y="742" text-anchor="end" class="pinX">6 ✗ flash</text><line x1="830" y1="738" x2="852" y2="738" class="stubX"/>
+</g>
+
+<!-- ============ ultrasonic module + the divider it MUST go through ============ -->
+<g>
+ <rect x="40" y="392" width="230" height="180" class="modb" rx="6"/>
+ <text x="52" y="416" class="mod">JSN-SR04T V3</text>
+ <text x="52" y="434" class="sm">waterproof, 20–450 cm</text>
+ <text x="52" y="460" class="md">V  red    ─┐</text>
+ <text x="52" y="480" class="md">G  black  ─┤</text>
+ <text x="52" y="500" class="md">T  yellow ─┼─► to the ESP32</text>
+ <text x="52" y="520" class="md">E  white  ─┘</text>
+ <text x="52" y="548" class="sm">4-core cable: twist T+E,</text>
+ <text x="52" y="564" class="sm">100 µF across V+G, close by</text>
+ <circle cx="270" cy="452" r="4" class="used"/><text x="280" y="456" class="net">+5V</text>
+ <circle cx="270" cy="472" r="4" fill="#222"/><text x="280" y="476" class="net" fill="#222">GND</text>
+ <circle cx="270" cy="492" r="4" class="used"/><text x="280" y="496" class="net">TRIG</text>
+ <circle cx="270" cy="512" r="4" class="used"/><text x="280" y="516" class="net">ECHO_raw</text>
+</g>
+<g>
+ <rect x="318" y="230" width="266" height="150" fill="#fff" stroke="#a30000" stroke-width="1.8" rx="6"/>
+ <text x="330" y="252" class="mod" fill="#a30000">ECHO divider — required</text>
+ <text x="330" y="276" class="md">ECHO_raw ─┬─/‾2k‾─┬─/‾3k3‾─┬─ GND</text>
+ <text x="330" y="296" class="md">             │      └─ ECHO → GPIO26</text>
+ <text x="330" y="316" class="md">            └─||─ 100 nF ─┘</text>
+ <text x="330" y="340" class="sm">5V × 3.3/5.3 = 3.00 V  (max 3.6 V)</text>
+ <text x="330" y="358" class="sm">100 nF at the pin kills ringing</text>
+ <text x="330" y="372" class="sm">that fakes the first 2–3 reads</text>
+ <circle cx="318" cy="272" r="4" class="used"/><text x="300" y="266" class="net">ECHO_raw</text>
+ <circle cx="584" cy="272" r="4" class="used"/><text x="590" y="262" class="net">ECHO</text>
+</g>
+<path d="M300 512 H306 V272 H318" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<path d="M584 272 V477 H560" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<path d="M300 492 H306 V448 H560" fill="none" stroke="#0b7d3f" stroke-width="2.2" opacity="0"/>
+<path d="M300 492 H400 V448 H560" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<path d="M270 452 H290 V738 H560" fill="none" stroke="#d12b2b" stroke-width="2.2"/>
+<text x="300" y="766" class="net" fill="#d12b2b">5 V (VIN)</text>
+<path d="M270 472 H282 V593 H560" fill="none" stroke="#222" stroke-width="2.2"/>
+<text x="288" y="560" class="net" fill="#222">GND</text>
+<path d="M600 216 H440 V419 H560" fill="none" stroke="#e08a00" stroke-width="2.2" opacity="0"/>
+
+<!-- ============ DS18B20 ============ -->
+<g>
+ <rect x="40" y="620" width="250" height="150" class="modb" rx="6"/>
+ <text x="52" y="644" class="mod">DS18B20 (water probe)</text>
+ <text x="52" y="662" class="sm">stainless can, epoxy sealed, IP67</text>
+ <text x="52" y="688" class="md">VDD ─ 3V3</text>
+ <text x="52" y="708" class="md">DQ  ─┬─/‾ 4.7 kΩ ‾─ 3V3</text>
+ <text x="52" y="728" class="md">GND ─ GND  └─ ONEWIRE</text>
+ <text x="52" y="752" class="sm">accuracy + a frost warning</text>
+ <circle cx="290" cy="694" r="4" fill="#e08a00"/><text x="298" y="698" class="net" fill="#e08a00">3V3</text>
+ <circle cx="290" cy="716" r="4" class="used"/><text x="298" y="720" class="net">ONEWIRE</text>
+ <circle cx="290" cy="738" r="4" fill="#222"/><text x="298" y="742" class="net" fill="#222">GND</text>
+</g>
+<path d="M290 716 H520 V506 H560" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<path d="M290 738 H500 V593" fill="none" stroke="#222" stroke-width="2.2"/>
+<path d="M290 694 H510 V216" fill="none" stroke="#e08a00" stroke-width="2.2"/>
+
+<!-- ============ OLED (optional, same I²C bus) ============ -->
+<g>
+ <rect x="1180" y="112" width="204" height="118" class="modb" rx="6"/>
+ <text x="1192" y="136" class="mod">OLED SSD1306 (opt)</text>
+ <text x="1192" y="152" class="sm">I²C 0x3C or 0x3D — auto-probed</text>
+ <text x="1192" y="176" class="md">VCC ─ 3V3      GND ─ GND</text>
+ <text x="1192" y="194" class="md">SDA ─ SDA      SCL ─ SCL</text>
+ <text x="1192" y="214" class="sm">same 2 wires as the BME280</text>
+ <text x="1192" y="226" class="sm">no library — wlg_display.h</text>
+ <circle cx="1180" cy="174" r="4" fill="#e08a00"/><text x="1174" y="168" class="net" fill="#e08a00" text-anchor="end">3V3</text>
+ <circle cx="1180" cy="192" r="4" class="used"/><text x="1174" y="186" class="net" text-anchor="end">SDA</text>
+ <circle cx="1180" cy="210" r="4" class="used"/><text x="1174" y="204" class="net" text-anchor="end">SCL</text>
+ <circle cx="1180" cy="224" r="4" fill="#111"/><text x="1174" y="234" class="net" fill="#111" text-anchor="end">GND</text>
+</g>
+<path d="M1160 192 H1180" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<path d="M1160 210 H1180" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<path d="M1160 174 H1180" fill="none" stroke="#e08a00" stroke-width="2.2"/>
+<path d="M1160 224 H1180" fill="none" stroke="#111" stroke-width="2.2"/>
+
+<!-- ============ BME280 ============ -->
+<g>
+ <rect x="880" y="230" width="260" height="176" class="modb" rx="6"/>
+ <text x="892" y="254" class="mod">BME280 breakout</text>
+ <text x="892" y="272" class="sm">I²C addr 0x76 (SD0→GND)</text>
+ <text x="892" y="298" class="md">VIN ─ 3V3     GND ─ GND</text>
+ <text x="892" y="318" class="md">SDA ─ SDA     SCL ─ SCL</text>
+ <text x="892" y="344" class="sm">10 kΩ pull-ups on SDA/SCL — most</text>
+ <text x="892" y="360" class="sm">breakouts already carry them.</text>
+ <text x="892" y="380" class="sm">air T → speed-of-sound correction</text>
+ <text x="892" y="396" class="sm">RH  → condensation alarm</text>
+ <circle cx="880" cy="296" r="4" fill="#e08a00"/><text x="852" y="290" class="net" fill="#e08a00">3V3</text>
+ <circle cx="880" cy="316" r="4" class="used"/><text x="856" y="310" class="net">SDA</text>
+ <circle cx="1140" cy="316" r="4" class="used"/><text x="1146" y="310" class="net">SCL</text>
+ <circle cx="1140" cy="296" r="4" fill="#222"/><text x="1146" y="290" class="net" fill="#222">GND</text>
+</g>
+<path d="M870 274 H1156 V316" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<path d="M870 361 H1166 V316" fill="none" stroke="#0b7d3f" stroke-width="2.2" opacity="0"/>
+<path d="M870 361 H1130 V316 H1140" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+
+<!-- ============ LED / button / buzzer / flow ============ -->
+<g>
+ <rect x="1180" y="404" width="204" height="96" class="modb" rx="6"/>
+ <text x="1192" y="494" class="sm">never GPIO2 (strapping)</text>
+ <text x="1192" y="426" class="mod">Heartbeat LED</text>
+ <text x="1192" y="448" class="md">GPIO18 ─/‾330 Ω‾─|─ GND</text>
+ <text x="1192" y="466" class="sm">heartbeat LED: proves</text>
+ <text x="1192" y="482" class="sm">the firmware is alive.</text>
+ <circle cx="1180" cy="462" r="4" class="used"/><text x="1150" y="456" class="net">LED</text>
+</g>
+<path d="M870 448 H1090 V462 H1180" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<g>
+ <rect x="1180" y="510" width="204" height="74" class="modb" rx="6"/>
+ <text x="1192" y="532" class="mod">Piezo alarm (opt)</text>
+ <text x="1192" y="554" class="md">GPIO17 ─/‾1 kΩ‾─ B  S8050</text>
+ <text x="1192" y="572" class="md">piezo at C, E → GND</text>
+ <circle cx="1180" cy="540" r="4" class="used"/><text x="1150" y="534" class="net">BUZZ</text>
+</g>
+<path d="M870 506 H1100 V540 H1180" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<!-- how the local alarm behaves: no cloud, no internet -->
+<g>
+ <rect x="1214" y="596" width="170" height="134" rx="6" fill="#f2fbf4" stroke="#0b7d3f" stroke-width="1.6"/>
+ <text x="1226" y="620" class="mod">the local alarm</text>
+ <text x="1226" y="642" class="sm">beeps every 9 s while an</text>
+ <text x="1226" y="656" class="sm">alarm is on and unmuted:</text>
+ <text x="1226" y="670" class="sm">low 1.8 kHz, high/fault</text>
+ <text x="1226" y="684" class="sm">2.6 kHz, 250 ms burst</text>
+ <text x="1226" y="702" class="sm">short BTN = snooze</text>
+ <text x="1226" y="716" class="sm">hold BTN 1.5 s = mute</text>
+</g>
+<g>
+ <rect x="880" y="440" width="230" height="76" class="modb" rx="6"/>
+ <text x="892" y="462" class="mod">BTN / FLOW (opt)</text>
+ <text x="892" y="484" class="md">BTN → GND (internal pull-up)</text>
+ <text x="892" y="502" class="md">FLOW reed contact → GND</text>
+ <circle cx="880" cy="245" r="0" fill="none"/>
+</g>
+<path d="M870 245 H900 V440" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+<path d="M870 419 H1000 V440" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+
+<!-- ============ battery divider ============ -->
+<g>
+ <rect x="40" y="150" width="230" height="150" class="modb" rx="6"/>
+ <text x="52" y="174" class="mod">Battery sense (phase 1)</text>
+ <text x="52" y="200" class="md">18650+ ─/‾1M‾─┬─/‾1M‾─ GND</text>
+ <text x="52" y="220" class="md">                 └─||─ 100 nF</text>
+ <text x="52" y="240" class="md">                  └─ VBAT (GPIO36)</text>
+ <text x="52" y="264" class="sm">GPIO36: input only, no pull-up</text>
+ <text x="52" y="280" class="sm">1 MΩ ⇒ ≈1.9 µA idle drain</text>
+ <circle cx="270" cy="232" r="4" class="used"/><text x="278" y="226" class="net">VBAT</text>
+</g>
+<path d="M270 232 H540 V274 H560" fill="none" stroke="#0b7d3f" stroke-width="2.2"/>
+
+<!-- analog option -->
+<g>
+ <rect x="40" y="322" width="228" height="58" class="modb" rx="6" opacity="0.75"/>
+ <text x="52" y="344" class="mod" fill="#666">Analog-in option (build 2)</text>
+ <text x="52" y="366" class="md" fill="#666">OUT─/‾1k‾─┬─/‾1k5‾─GND → ANA</text>
+ <circle cx="268" cy="352" r="4" fill="#9aa0a6"/>
+</g>
+<path d="M268 352 H552 V419 H560" fill="none" stroke="#9aa0a6" stroke-width="1.8"/>
+
+<!-- ============ power in ============ -->
+<g>
+ <rect x="880" y="560" width="330" height="170" class="modb" rx="6"/>
+ <text x="892" y="584" class="mod">Power in — phase 0 (bench)</text>
+ <text x="892" y="610" class="md">USB-C ── 5 V ──► VIN</text>
+ <text x="892" y="630" class="md">board's AMS1117 makes 3V3</text>
+ <text x="892" y="650" class="md">3V3 ──► BME280, DS18B20, LED, OLED</text>
+ <text x="892" y="676" class="warn">ultrasonic needs 4.5–5.5 V → VIN only</text>
+ <text x="892" y="700" class="sm">phase 1: 18650 + solar. The AMS1117 is fine:</text>
+ <text x="892" y="716" class="sm">≈40 mW average; 0.4 W only during TX bursts.</text>
+ <circle cx="880" cy="612" r="4" fill="#d12b2b"/>
+ <circle cx="880" cy="648" r="4" fill="#e08a00"/>
+</g>
+<path d="M560 738 H860 V612 H880" fill="none" stroke="#d12b2b" stroke-width="2.2"/>
+<path d="M560 216 H556" stroke="#e08a00" stroke-width="2.2" fill="none"/>
+
+<!-- ============ tables / warnings ============ -->
+<g>
+ <rect x="34" y="800" width="660" height="228" rx="6" fill="#fff4f4" stroke="#a30000" stroke-width="1.6"/>
+ <text x="50" y="826" class="warn">Never wire these, even though the board breaks them out</text>
+ <text x="50" y="850" class="md">D6 D7 D8 D9 D10 D11 (GPIO6–11) → SPI flash lines; wiring here stops the board booting</text>
+ <text x="50" y="872" class="md">GPIO0, 2, 4, 5, 12, 15           → strapping pins: boot mode, flash voltage, boot-log</text>
+ <text x="50" y="894" class="md">GPIO1, GPIO3   → the CP2102 serial console (your logs live there)</text>
+ <text x="50" y="924" class="hd">Rules for the rest</text>
+ <text x="50" y="946" class="md">GPIO34–39: input only, no pull-ups. ADC1 works with WiFi on, ADC2 does not</text>
+ <text x="50" y="968" class="md">3.3 V logic: abs max is VDD+0.3 V = 3.6 V. 5 V on ECHO destroys the pin.</text>
+ <text x="50" y="992" class="md">if your carrier board silkscreen differs, re-check this map before powering up</text>
+</g>
+<g>
+ <rect x="720" y="800" width="666 " height="228" rx="6" fill="#f4f8ff" stroke="#0b5cad" stroke-width="1.6"/>
+ <text x="736" y="826" class="mod">Connection list (net ⇄ GPIO)</text>
+ <text x="736" y="852" class="md">TRIG → GPIO25  ultrasonic T (3.3 V output triggers a 5 V module fine)</text>
+ <text x="736" y="872" class="md">ECHO_raw    → divider  → GPIO26      SDA → GPIO21   SCL → GPIO22</text>
+ <text x="736" y="892" class="md">ONEWIRE     → GPIO27   (DS18B20, 4.7 kΩ pull-up)</text>
+ <text x="736" y="912" class="md">VBAT        → GPIO36   (1 MΩ / 1 MΩ divider)</text>
+ <text x="736" y="932" class="md">LVL_ANA     → GPIO33   build 2 / analog sensor only</text>
+ <text x="736" y="952" class="md">LED → 18   BTN → 23   BUZZ → 17   FLOW → 19</text>
+ <text x="736" y="976" class="md">+5V → ultrasonic V and VIN    3V3 → BME280, DS18B20, OLED, pull-ups    GND → everything</text>
+ <text x="736" y="996" class="md">I²C on one pair: OLED 0x3C/0x3D · BMP280/BME280 0x76/0x77 — 3 modules, 2 wires</text>
+ <text x="736" y="1016" class="sm">Wire colours: red 5 V · orange 3.3 V · black GND · green signal. Keep T+E twisted.</text>
+</g>
+</svg>

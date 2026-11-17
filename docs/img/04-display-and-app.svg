@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="700" viewBox="0 0 1240 700" font-family="DejaVu Sans, Arial, sans-serif">
+<defs>
+ <style>
+  .ttl{font-size:23px;font-weight:700;fill:#111}
+  .sub{font-size:13px;fill:#555}
+  .mod{font-size:15px;font-weight:700;fill:#111}
+  .md{font-size:12.5px;fill:#222;font-family:DejaVu Sans Mono,monospace}
+  .sm{font-size:11.5px;fill:#666}
+  .lbl{font-size:13px;fill:#0b5cad}
+  .warn{font-size:13.5px;font-weight:700;fill:#a30000}
+  .ok{font-size:12.5px;fill:#0b7d3f}
+  .big{font-size:52px;font-weight:700;fill:#111;font-family:DejaVu Sans Mono,monospace}
+  .scr{font-size:21px;fill:#e8eef5;font-family:DejaVu Sans Mono,monospace}
+  .scrB{font-size:21px;font-weight:700;fill:#fff;font-family:DejaVu Sans Mono,monospace}
+  .ycoord{font-size:11px;fill:#8a6a2f;font-family:DejaVu Sans Mono,monospace}
+  .boxA{fill:#fffdf3;stroke:#8a6a2f;stroke-width:1.6}
+  .boxB{fill:#f4f8ff;stroke:#0b5cad;stroke-width:1.6}
+  .boxC{fill:#f2fbf4;stroke:#0b7d3f;stroke-width:1.6}
+  .boxR{fill:#fff4f4;stroke:#a30000;stroke-width:1.6}
+ </style>
+</defs>
+<rect width="1240" height="700" fill="#fff"/>
+<text x="34" y="40" class="ttl">What the box shows and what the phone gets — OLED map, streams, message budget</text>
+<text x="34" y="62" class="sub">Left: the real 128×64 layout drawn by oledDraw() in water_level_gauge.ino, 4× size, every row on its y coordinate from the code.</text>
+<text x="34" y="82" class="sub">Right: the Blynk datastreams the same sample feeds. Both panels are optional: ENABLE_OLED 0 / ENABLE_BLYNK 0 and the gauge still works over LAN.</text>
+
+<!-- ================= SCREEN (4x scale, origin 64,140) ================= -->
+<g>
+ <rect x="58" y="134" width="524" height="268" rx="8" fill="#14181d" stroke="#333" stroke-width="2"/>
+ <!-- row bands, from the code: y=0,18,30,39,48,56 -->
+ <line x1="58" y1="206" x2="582" y2="206" stroke="#2b3138"/>
+ <line x1="58" y1="260" x2="582" y2="260" stroke="#2b3138"/>
+ <line x1="58" y1="296" x2="582" y2="296" stroke="#2b3138"/>
+ <line x1="58" y1="332" x2="582" y2="332" stroke="#2b3138"/>
+ <line x1="58" y1="362" x2="582" y2="362" stroke="#2b3138"/>
+ <text x="68" y="188" class="big">84</text>
+ <text x="152" y="188" class="scr">cm</text>
+ <text x="574" y="164" text-anchor="end" class="scr">68.9%</text>
+ <text x="574" y="204" text-anchor="end" class="scr">7 804 L</text>
+ <!-- bar: y=18..27, 68.9 % of 512 px -->
+ <rect x="64" y="212" width="512" height="40" fill="none" stroke="#5a636e"/>
+ <rect x="64" y="212" width="353" height="40" fill="#dfe6ee"/>
+ <text x="70" y="286" class="scr">BAT 3.82V 74%</text>
+ <text x="574" y="286" text-anchor="end" class="scr">-67 dBm</text>
+ <text x="70" y="322" class="scr">AIR 31C 62%</text>
+ <text x="574" y="322" text-anchor="end" class="scr">H2O 27C</text>
+ <text x="70" y="358" class="scr">ECHO 90.0cm</text>
+ <text x="574" y="358" text-anchor="end" class="scr">3 bad</text>
+ <text x="320" y="388" text-anchor="middle" class="scrB">OK</text>
+ <text x="34" y="146" class="ycoord">y=0</text>
+ <text x="34" y="212" class="ycoord">y=18</text>
+ <text x="34" y="266" class="ycoord">y=30</text>
+ <text x="34" y="302" class="ycoord">y=39</text>
+ <text x="34" y="338" class="ycoord">y=48</text>
+ <text x="34" y="366" class="ycoord">y=56</text>
+</g>
+<text x="58" y="424" class="mod">oledDraw() — 128×64, driver in wlg_display.h (no library), 1 kB frame buffer</text>
+
+<!-- ================= SCREEN ROW CALLOUTS ================= -->
+<g>
+ <rect x="612" y="134" width="286" height="274" class="boxA" rx="6"/>
+ <text x="626" y="158" class="mod">row by row</text>
+ <text x="626" y="180" class="md">y=0   level as a 2x number,</text>
+ <text x="638" y="194" class="md">cm, %, litres (right)</text>
+ <text x="626" y="214" class="md">y=18  bar 0…100 % of max_cm</text>
+ <text x="626" y="234" class="md">y=30  battery V + %  …  RSSI</text>
+ <text x="638" y="248" class="sm">NO WIFI when the STA link is down</text>
+ <text x="626" y="268" class="md">y=39  box air T/RH … water T</text>
+ <text x="638" y="282" class="sm">the condensation risk, and air T is</text>
+ <text x="638" y="294" class="sm">what the speed-of-sound uses</text>
+ <text x="626" y="314" class="md">y=48  what the sensor saw:</text>
+ <text x="638" y="328" class="md">ECHO x cm  or  DP +x.x hPa</text>
+ <text x="638" y="342" class="sm">right: rejected reads — a bare sensor</text>
+ <text x="638" y="354" class="sm">lies slowly, the counter shows it</text>
+ <text x="626" y="374" class="md">y=56  status word, centred</text>
+ <text x="626" y="392" class="ok">an alarm inverts that band: the only</text>
+ <text x="626" y="404" class="ok">way to shout on 128×64</text>
+</g>
+
+<!-- ================= APP STREAMS ================= -->
+<g>
+ <rect x="920" y="134" width="286" height="274" class="boxB" rx="6"/>
+ <text x="934" y="158" class="mod">Blynk datastreams</text>
+ <text x="934" y="178" class="md">V1 level_pct      every sample</text>
+ <text x="934" y="192" class="md">V8 status         on change</text>
+ <text x="934" y="212" class="md">V0 level_cm V2 litres V4 vbat</text>
+ <text x="934" y="224" class="sm">only when sampling ≥ 300 s apart</text>
+ <text x="934" y="244" class="md">V5 air_t  V6 air_rh  V7 water_t</text>
+ <text x="934" y="258" class="md">V9 rssi  V3 dist_cm</text>
+ <text x="934" y="272" class="md">V14 V15 V16 pressures (build 2)</text>
+ <text x="934" y="284" class="sm">the slow set: once an hour</text>
+ <text x="934" y="308" class="md">written BY THE APP (sliders/switch):</text>
+ <text x="934" y="322" class="md">V10 sample_s  V11 low_cm</text>
+ <text x="934" y="336" class="md">V12 high_cm   V13 mute</text>
+ <text x="934" y="352" class="ok">all four are read back on connect, so</text>
+ <text x="934" y="364" class="ok">the app stays the master after a reboot</text>
+ <text x="934" y="384" class="sm">17 of the 50 streams a free template allows</text>
+</g>
+
+<!-- ================= SCREEN RULES ================= -->
+<g>
+ <rect x="34" y="440" width="560" height="226" class="boxC" rx="6"/>
+ <text x="50" y="466" class="mod">Panel rules that come from the hardware, not taste</text>
+ <text x="50" y="490" class="md">blanked after OLED_IDLE_S 120 s (0xAE), driver untouched</text>
+ <text x="50" y="508" class="md">wake: button press, serial d, or any alarm change</text>
+ <text x="50" y="526" class="md">#define OLED_IDLE_S 0 → never blank (mains-powered box)</text>
+ <text x="50" y="548" class="warn">an SSD1306 in a roof box is unreadable in direct sun</text>
+ <text x="50" y="564" class="md">contrast drifts with temperature; raise OLED_CONTRAST</text>
+ <text x="50" y="580" class="md">heat + UV kill these panels in a hot box long before the ESP32</text>
+ <text x="50" y="596" class="md">static digits burn in — which is why the default is blanking</text>
+ <text x="50" y="618" class="md">D flips 180°, saved in NVS (the box may hang either way round)</text>
+ <text x="50" y="636" class="sm">no OLED fitted / dead? boot says so once and the sketch carries on</text>
+</g>
+
+<!-- ================= MESSAGE BUDGET ================= -->
+<g>
+ <rect x="612" y="440" width="594" height="226" class="boxR" rx="6"/>
+ <text x="628" y="466" class="warn">the free plan limit that stops a gauge dead: 100 000 messages/month</text>
+ <text x="628" y="490" class="md">sample    msgs/month   streams per sample</text>
+ <text x="628" y="508" class="md">   60 s      ≈50 000     1 (V1) + hourly slow set</text>
+ <text x="628" y="524" class="md">  300 s      ≈41 000     4 (V1 V0 V2 V4) + status on change</text>
+ <text x="628" y="540" class="md">  900 s      ≈18 000     same 4 — 18 % of the quota ← deployment</text>
+ <text x="628" y="562" class="md">below BLYNK_THROTTLE_S (300 s) the firmware drops to V1 + status</text>
+ <text x="628" y="578" class="md">and says so once on serial. That is what keeps a 60 s bring-up run</text>
+ <text x="628" y="594" class="md">from burning the whole month's quota in four days.</text>
+ <text x="628" y="616" class="md">push/email events are a separate budget: 20 per hour on free, and</text>
+ <text x="628" y="632" class="md">the firmware adds its own 30 min per-event cooldown on top.</text>
+ <text x="628" y="650" class="sm">limits from docs.blynk.io/en/blynk.console/limits (read 2026-11-16)</text>
+<text x="628" y="664" class="sm">they change — re-check before you scale up</text>
+</g>
+
+<!-- ================= BOTTOM LEFT: what is NOT here ================= -->
+<g>
+ <text x="34" y="690" class="sm">Nothing on this page can run the pump: no relay, no output pin for a motor, no cloud-side control of anything except thresholds, sample interval and buzzer mute.</text>
+</g>
+</svg>
