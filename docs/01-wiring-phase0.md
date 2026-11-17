@@ -1,138 +1,156 @@
-# 01 — Phase 0 wiring and Arduino sketch
+# Phase 0 wiring — the breadboard build (rev B, SR04M ultrasonic)
 
-Code: `arduino/water_level_gauge/water_level_gauge.ino` — **plain Arduino sketch. The core build needs
-no libraries at all**: the OLED driver and its font are in the project (`wlg_display.h`,
-`wlg_font.h`). The only exception is the optional phone app — if `ENABLE_BLYNK` is 1 you must install
-the Blynk library, or set it to 0; the build fails loudly rather than quietly shipping a gauge that
-never posts. Details: [`05-blynk-and-display.md`](05-blynk-and-display.md) §1.
-Arduino IDE: Boards Manager → install **“esp32 by Espressif Systems”**, then select **DOIT ESP32 DEVKIT V1**
-(or *ESP32 Dev Module*, Flash 38 pin). Open the `.ino`, pick the COM port, Upload. Serial Monitor 115200.
+Phase 0 answers three questions before any PCB is designed: does the SR04M answer and stay
+stable, is the mounting geometry above the 20 cm blind area, and does WiFi reach through the
+metal lid. Nothing here is permanent. Board: **ESP32-WROOM-32 DevKitC V1, 38-pin (CP2102)** —
+in the Arduino IDE choose *DOIT ESP32 DEVKIT V1*.
 
-Visual: [`img/01-wiring.svg`](img/01-wiring.svg) / [`img/01-wiring.png`](img/01-wiring.png) — full pin map with
-the echo divider drawn out. [`img/03-power.svg`](img/03-power.svg) is the phase‑1 power tree.
+Full design decisions: [00-design.md](00-design.md). Sensor theory and the blind-zone
+arithmetic: [03-ultrasonic.md](03-ultrasonic.md). Picture: [img/01-wiring.svg](img/01-wiring.svg).
 
-## Pin map (verified against the DevKitC V1 / NodeMCU‑32S 38‑pin layout)
+> **The gauge is an instrument, not a control.** It reads the level and alarms. It must never
+> switch a pump or a valve; that interlock belongs in the pump's own float circuit.
 
-Left column, top→bottom: `3V3 EN 36 39 34 35 32 33 25 26 27 14 12 GND 13 D9 D10 D11 VIN`
-Right column, top→bottom: `GND 23 22 1 3 21 GND 19 18 5 17 16 4 0 2 15 D8 D7 D6`
+---
 
-| GPIO | Net | Dir | Connects |
+## 1. The pin map
+
+Rev B adopts the GPIO numbers from the reference project
+([iotcircuithub.com](https://iotcircuithub.com/iot-based-water-level-indicator/)), so you can
+follow that project's schematic with this repo. Where this build differs, it says so.
+
+| signal | GPIO | to / from | notes |
 |---|---|---|---|
-| 25 | `TRIG` | out 3.3 V | JSN‑SR04T **T** — 3.3 V pulse triggers the 5 V module fine |
-| 26 | `ECHO` | in 3.3 V | JSN‑SR04T **E** **through the 2 kΩ/3.3 kΩ divider** |
-| 21 | `SDA` | I²C | BME280 **and** the optional OLED share this wire — `0x76`/`0x77` for the BME280/BMP280, `0x3C`/`0x3D` for the SSD1306; the modules carry their own pull-ups, add none |
-| 22 | `SCL` | I²C | as above (`Wire.begin(21,22)` runs once, everything shares that one bus) |
-| 27 | `ONEWIRE` | 1‑Wire | DS18B20 DQ + 4.7 kΩ pull‑up |
-| 36 | `VBAT` | ADC1_CH0, input only | battery divider 1 MΩ/1 MΩ (phase 1; skip for now) |
-| 33 | `LVL_ANA` | ADC1_CH5 | spare — analog sensor option only |
-| 18 | `LED_HB` | out + 330 Ω | heartbeat LED |
-| 23 | `BTN` | in, pull‑up | service button — short press wakes the OLED and snoozes the buzzer one period; **hold 1.5 s** toggles the mute (saved) |
-| 17 | `BUZZ` | out | piezo via S8050 (optional) — 250 ms tone every 9 s while an alarm is on and unmuted: 1.8 kHz low, 2.6 kHz high/fault |
-| 19 | `FLOW` | in, pull‑up | reed contact on a pipe (optional) |
-| VIN | 5 V in | power | USB 5 V now; boost converter later. **The ultrasonic module runs off VIN, not 3V3** |
-| 3V3 | 3.3 V out | power | BME280, DS18B20 pull‑ups |
-| GND | — | power | common with every module |
+| `TRIG` | **27** | → module TRIG/RX | 12 µs HIGH pulse (module wants ≥ 10 µs) |
+| `ECHO` | **26** | ← module ECHO/TX | **through the divider in §2 — never 5 V direct** |
+| `SDA` | **21** | OLED SDA | matches the reference project |
+| `SCL` | **22** | OLED SCL | matches the reference project |
+| `BTN` | **12** | push button → GND | `INPUT_PULLUP`, as in the reference build. **Strapping pin — §4** |
+| `BUZZ` | **13** | → 220 Ω → transistor base | the local half of the alarm |
+| `LED` | **14** | → 220 Ω → LED → GND | heartbeat, solid on when full. The reference build's green "tank full" LED |
+| `VBAT` | **36** | ← 1 MΩ / 1 MΩ from the rail | ADC1_CH0, **input-only pin**, no pull-up available |
 
-Pins deliberately left empty: 32 (ADC2 while WiFi is up), 34/35/39 (spare ADC1), 16 (strapping),
-4 (boot log), 0 (boot mode), 2 (strapping + the carrier board LED), 15 (boot log), 12 (flash voltage), 14.
-Never wire: **1, 3** (CP2102 serial console) and **6, 7, 8, 9, 10, 11** — the DevKitC breaks the SPI‑flash
-lines out on both sides of the 38‑pin board. Connecting anything there stops the board from booting.
+The reference project's ultrasonic pair is `D26`/`D27`; which of the two is Echo and which is
+the trigger is ambiguous in its write-up. This repo fixes it as **ECHO = 26, TRIG = 27** in
+`water_level_gauge.ino` — if you follow the video's photo instead and the module never
+answers, swap those two wires and send `r`.
 
-## Echo divider — mandatory
+Free / deliberately unused: 4, 5, 16, 17, 18, 19, 23, 25, 32, 33, 34, 35, 39. GPIO23 is the
+drop-in alternative for the button if you want a button that is safe to hold during a reset.
+
+---
+
+## 2. The echo divider — the one wire that kills a board
+
+The module runs at 3.0–5.5 V. Driven from the 5 V rail its ECHO pulse is **5 V**, and the
+ESP32 is not 5 V tolerant: 5 V into GPIO26 damages the pin, sometimes immediately, sometimes
+after a few weeks.
 
 ```
-ECHO ──┬──[2 kΩ]──┬──[3.3 kΩ]──┬── GND      5 V × 3.3/5.3 = 3.00 V
-       │          └→ GPIO26                  abs max on an ESP32 pin = 3.6 V
-      [100 nF]───────┘           GPIO26 goes HIGH for the whole echo width, so no AC coupling
+module ECHO ──┬──[ 2 kΩ ]──┬── GPIO26
+              │            │
+              │         [ 3.3 kΩ ]
+              │            │
+             GND          GND
+                    3.3/5.0 × 5.0 V ≈ 3.00 V at the pin
 ```
-Feeding 5 V into GPIO26 destroys the pin and usually the whole chip. Do the divider first, then wire power.
 
-## Sensor module wiring (JSN‑SR04T V3, 4‑wire)
+Use 1 % resistors if you have them; the divider's accuracy does not matter (it is a level
+shift, not a measurement) but its presence very much does. The firmware prints a reminder on
+every boot: `ECHO=26(divider!)`.
 
-| module wire | colour | to |
-|---|---|---|
-| V | red | VIN / 5 V rail |
-| G | black | GND |
-| T | yellow | GPIO25 |
-| E | white | output of the divider above |
+**Alternative that needs no divider:** power the module from the board's **3V3** pin instead
+of 5 V. The module works down to 3.0 V, its echo is then 3.3 V and safe on a direct
+connection. Cost: acoustic margin — the transmit drive is lower, so far and weak echoes (a
+low, rippling water surface) fall off first. On the bench it usually still reads; on the tank
+it is the difference between `no echo` and a number. Recommended build: **5 V + divider**.
+The 3V3 variant is worth one test in the phase-0 plan precisely so you know what you would be
+giving up.
 
-Twist T+E together, keep that pair under 2 m, and put 100 µF across V+G at the module.
+---
 
-## Power
+## 3. The rest of the bench
 
-Bench: USB‑C → VIN, the board's AMS1117 makes 3V3. Average board current with WiFi connected is
-20–25 mA, so the LDO dissipates ≈40 mW — fine on the bench and fine in a ventilated box. It only
-gets hot if you sit *right on top of it* inside a sealed foam‑lined box. Final build:
-`img/03-power.svg` — solar → 18650 charger → 2× 18650 parallel → boost 5 V → VIN.
-
-## Carrier board caveat
-
-Those 38‑pin “ESP32S” carrier boards usually wire an onboard LED to **GPIO 2** and a button to
-**GPIO 0** — both strapping pins. That is why the sketch uses **GPIO 18** for heartbeat and **GPIO 23**
-for the button. Check your board's silkscreen against the diagram before powering up. If the carrier
-board's layout differs from the DevKitC column order above, re-check: it is the silkscreen label that
-matters, not the physical position.
-
-## Optional OLED on the box — 4 wires, no new GPIO, no library
-
-| OLED pin | to |
+| item | wiring |
 |---|---|
-| VCC | 3V3 — these modules are 3.3 V I²C parts, do **not** feed VIN |
-| GND | GND |
-| SDA | GPIO21 (the BME280's SDA — same two wires) |
-| SCL | GPIO22 |
+| **OLED** 0.96" SSD1306 (4-pin: VCC GND SDA SCL) | VCC → 3V3, GND → GND, SDA → 21, SCL → 22. Auto-probed at 0x3C, then 0x3D. Cheap modules carry the I²C pull-ups on-board; a bare SSD1306 breakout without them may need 4.7 kΩ to 3V3 on each line |
+| **Buzzer** 5 V piezo, active | GPIO13 → 220 Ω → BC547/S8050 base; emitter → GND; buzzer +5 → 5 V rail, − → collector. Put the buzzer's own internal diode across it if it has one, otherwise a 1N4148 cathode-to-+5 across the terminals. Driving it directly from the GPIO is possible but loud enough to be annoying and loads the pin |
+| **LED** green 5 mm | GPIO14 → 220 Ω → LED → GND. Heartbeat at 1.5 s; **solid on** for the full/overflow alarm |
+| **Button** tactile | GPIO12 → one leg, other leg → GND. No external resistor: `INPUT_PULLUP` provides it (same as the reference build). Short press = wake the OLED + snooze the buzzer; hold 1.5 s = mute latch |
+| **Battery/5 V sense** | rail → 1 MΩ → GPIO36 → 1 MΩ → GND. GPIO36 is input-only, so no internal pull-down trick is available; keep the divider stiff enough that a floating pin cannot drift |
+| **Module** | VCC → 5 V, GND → GND, TRIG/RX → 27, ECHO/TX → divider → 26. Probe on its cable, face down |
 
-Auto-probed at boot (`0x3C`, then `0x3D`). If nothing answers, boot prints
-`oled: nothing answering at 0x3C/0x3D — display code stays idle`, everything else is unaffected, and
-the bus is re-probed every 10 min, so fitting a panel later needs no re-flash. Serial `d` redraws,
-`D` flips 180° (saved). **In a roof box an SSD1306 is unreadable in direct sun and burns in** — put
-the window on the shaded side and leave the 120 s blanking on
-([`05-blynk-and-display.md`](05-blynk-and-display.md) §2, and the mounting figure).
+**Connect GND to the module before VCC.** The datasheet asks for that order and it matters
+when the supply is mains-referenced: a signal-first connection can latch current back through
+the module's ESD diodes.
 
-## Serial commands (115200 8N1)
+Decouple the module where it sits: 100 µF electrolytic + 100 nF ceramic across VCC/GND at the
+module. The 8-cycle 40 kHz burst is a real current pulse; without local capacitance the
+supply dips and the ESP32 brown-outs — the classic symptom is the board rebooting whenever it
+pings, which looks like a software bug.
 
-```
-r  s  c  w  p  e  f  a  o  z  m  i  b  x  l  u  j  d  D  k  h
+---
 
-r one raw sensor read                        s JSON status only
-w (bare) WiFi scan / RSSI test               w <ssid>  set SSID        p <pass>  set password
-e <cm> empty distance   f <cm> full distance   (build 1: ultrasonic)
-a <cm2> tank area (92903)                    m <cm> full-scale depth   (build 2: m 121.9)
-o <cm> baro zero offset                      z zero the tube reading right now
-i <sec> sample interval                      b battery voltage
-l <cm> LOW alarm level (default 24)          u <cm> OVERFLOW alarm level (default 120)
-j buzzer mute on/off                         x erase NVS and reboot
-h this help
-d redraw the OLED now                        D flip the OLED 180°, saved
-k Blynk link state + one push + one test event
-```
+## 4. Two pin traps on this board
 
-`d`/`D` are not compiled at all with `ENABLE_OLED 0`; `k` is not compiled at all with
-`ENABLE_BLYNK 0`. This is the firmware's own `h` output, so if this table ever disagrees with the
-sketch, the sketch wins.
+**Do not wire anything to the pins printed `D6 D7 D8 D9 D10 D11`.** Those are the SPI flash
+lines (CS, SCK, MISO, MOSI, and the flash's power-up pins). The DevKitC breaks them out and
+they look perfectly usable. Touching them while the board runs usually just hangs it.
 
-## Alarms — what the box does on its own
+**GPIO12 (`MTDI`) is a strapping pin.** It selects the flash mode at reset and its state at
+that moment matters. Because a button to GND holds it low, **holding the button while plugging
+in or resetting the board stops it booting** — it will sit silent until you let go. Everything
+else about GPIO12 as an input is fine, and the reference build uses it too. If you would
+rather not have that trap, move the button to **GPIO23** (change `PIN_BTN`, one line) — the
+docs and the diagram note both options.
 
-No internet needed for any of this; the phone push is a copy of the same decision, not the source of it.
+Also leave alone, for reset reasons: GPIO0 (boot), GPIO2 (boot), GPIO15 (boot), GPIO9/10
+(boot + flash).
 
-| what | value | where it lives |
-|---|---|---|
-| low level sets the alarm | `DEF_LOW_CM` 24 cm (≈20 % of the tank) | change with `l <cm>`, saved |
-| overflow level | `DEF_HIGH_CM` 120 cm | change with `u <cm>`, saved |
-| hysteresis | 2 cm — a low alarm sets at `low` and only clears at `low + 2` | `ALARM_HYST_CM` |
-| notification cooldown | 30 min per event | `ALARM_COOLDOWN_S` |
-| buzzer | 250 ms every 9 s; 1.8 kHz low, 2.6 kHz high/fault | `BUZZ_PERIOD_MS`, `BUZZ_ON_MS` |
-| mute | survives a reboot; `j`, a 1.5 s button hold, or the app switch | NVS key `mute` |
+---
 
-A fault (`TUBE SENSOR MISSING`, `NO VALID READS`, `TUBE OVER RANGE`) is a **separate** alarm with its
-own event and its own pitch, and nothing is declared faulty until the first valid filtered reading
-exists — a reboot cannot cry wolf. The logic is `evaluateAlarms()`; the beep is `buzzerService()`;
-the screen banner and the app text use the same `statusText()` word as `/api/state`’s `status` key.
+## 5. Power for the bench
 
-## Web (phase 0 test page only)
+Bench: USB from the PC is enough — the module takes under 8 mA while pinging, the OLED 3–8 mA
+with the panel awake, the buzzer ~30 mA while beeping, so the whole thing sits under the
+500 mA a USB port offers.
 
-`http://<ip>/` live page · `/api/state` JSON · `/api/log` force a sample · `/api/scan` WiFi scan.
-`/api/state` now also carries `status`, `al_low`/`al_high`/`al_fault`, `low_cm`, `high_cm`, `mute`, so
-a page or dashboard of your own can show what the box is alarmed about. The CSV log schema is
-unchanged — status/alarm fields are deliberately not in the CSV, so old parsers keep working.
-If WiFi credentials are wrong or empty it opens AP **WaterLevel-Setup** / **waterlevel** on 192.168.4.1.
+Tank: 1S 18650 → CN3791 solar charge controller (Li-ion, set the cutoff to 4.20 V) → 5 V boost
+converter (≥ 1 A) → board VIN. The panel and the current table are in
+[00-design.md §7](00-design.md) and [img/03-power.svg](img/03-power.svg). Do not run the box
+from the battery at 3.7 V directly: the module is fine down to 3.0 V but the DevKitC's regulator
+headroom and the OLED's brightness both fall off, and the brown-out risk during a ping goes up.
+
+---
+
+## 6. Bring-up order (do it in this order, it saves an hour)
+
+1. Power up with **nothing** attached except USB. Serial monitor at 115200, board reset — you
+   want the banner and no brown-out reboot loop.
+2. Fit the OLED. Boot should print `oled: SSD1306 at 0x3C`. Nothing at 0x3C/0x3D means swapped
+   SDA/SCL or missing pull-ups.
+3. Fit the module, **GND first**, then VCC. Send `r`. You want a pulse width and a distance
+   with a hand 30 cm below the face. `no echo` → §8 of [03-ultrasonic.md](03-ultrasonic.md).
+4. Send `c`, then set the calibration for the bench: `e 152.1`, `f 30.2` (or the real measured
+   distances if you are already at the tank). Send `v` to see span, gate and the L/cm figure.
+5. WiFi: `w YourSSID`, `p yourpassword`, reset. Read the IP. Open `http://<ip>/`.
+6. Buzzer and LED: send `l 999` to force the low alarm — the buzzer beeps every 9 s, the LED
+   comes on, the OLED status band inverts. Short press the button (snooze), hold 1.5 s (mute),
+   `l 24` to put it back.
+7. Optional app layer: paste `BLYNK_TEMPLATE_ID` / `BLYNK_AUTH_TOKEN`, recompile, send `k`.
+   Skip it entirely and the gauge still does everything locally. See
+   [05-blynk-and-display.md](05-blynk-and-display.md).
+
+---
+
+## 7. What phase 0 must prove before a PCB is designed
+
+| # | thing to prove | how | pass criterion |
+|---|---|---|---|
+| 1 | the module answers in mode 1 and holds still | 24 h log on the lid (`i 60`, capture the CSV) | ≥ 95 % accepted pings, filtered distance within ±2 cm over the day |
+| 2 | the mounting clears the blind zone | measure face → full line with a tape | ≥ 30 cm, and `d_full` > 25 cm in the config |
+| 3 | WiFi works with the box on a closed metal lid | `w` scan and RSSI, both lid open and shut | ≥ −80 dBm with the lid shut |
+| 4 | power | run from the 18650 + panel for a week | no brown-out reboot in the log, `vbat` never under 3.4 V |
+| 5 | the alarm reaches a human | force `l`, watch the buzzer, the OLED and the phone | beep within 9 s, push delivered, snooze and mute both work |
+
+Full procedure and expected numbers: [02-phase0-test-plan.md](02-phase0-test-plan.md).
