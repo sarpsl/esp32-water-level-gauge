@@ -11,7 +11,11 @@ Reference build this project follows: *IoT Based Water Level Indicator using Ult
 (Tech StudyCell, Dec 2022) — ESP32 + SR04M/HC-SR04 + 0.96" I²C OLED + Blynk + buzzer + button:
 <https://iotcircuithub.com/iot-based-water-level-indicator/> (video: <https://youtu.be/9geREeE13jc>).
 We keep that project's **pin map, part choices and alarm behaviour**, and we keep this repo's
-calibration model, filter, CSV log, LAN JSON page, echo divider and read-only rule.
+calibration model, filter, CSV log, LAN JSON page, echo divider and read-only rule. Nothing from that
+project is reproduced here — no code, schematic, PCB layout, image or sentence (one quoted line excepted,
+in quotes and attributed). What was taken and what was not is itemised in
+[`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) §2; licence is MIT (`LICENSE`), with the Adafruit
+font data in `wlg_font.h` staying under Adafruit's BSD notice.
 
 Code is a plain **Arduino sketch** (`arduino/water_level_gauge/water_level_gauge.ino`); the core build
 needs no libraries. Diagrams: [`img/01-wiring.svg`](img/01-wiring.svg) wiring map,
@@ -37,8 +41,10 @@ usually a silt bed on the floor.
 ## 2. The sensor: SR04M family waterproof ultrasonic module
 
 Sold in India as **SR04M / AJ-SR04M / SR04M-2 / JSN-SR04M-2** (same family, module + separate
-encapsulated waterproof probe on a fixed cable). Two datasheets are quoted throughout this repo; both
-are in the sources list at the end of §9.
+encapsulated waterproof probe on a fixed cable). The numbers below are transcribed **as facts** from
+two documents — `AJ-SR04M` (rev 200925A) and `JSN-SR04M-2` (rev 200427), cited in
+[`03-ultrasonic.md` §10](03-ultrasonic.md). No datasheet PDF, page image or paragraph of datasheet
+prose is reproduced anywhere in this repo; buy the datasheet with the module you actually get.
 
 | Spec | Value | Source |
 |---|---|---|

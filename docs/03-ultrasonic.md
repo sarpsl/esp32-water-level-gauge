@@ -117,9 +117,10 @@ and the reason is logged beside the number, in the CSV, on the web page and in
 `echo_reason` in the JSON.
 
 **Consequence for the mount: the full water line must sit further than 25 cm below the
-probe face.** That single rule sizes the whole mounting — see §4. The reference project
-states the same rule as "the minimum distance between the sensor and the full tank water
-level must be greater than 25 cm".
+probe face.** That single rule sizes the whole mounting — see §4. The reference project states
+the same rule, in its own words: "the minimum distance between the sensor and the full tank
+water level must be greater than 25cm". We adopt it, and the firmware gate sits 5 cm above the
+module's own 20 cm limit for the three reasons listed above.
 
 ---
 
@@ -229,8 +230,8 @@ not a reason to fit parts now.
 ## 7. Calibration: two distances, not two levels
 
 Everything in the gauge is a **distance from the probe face, measured downwards** — the same
-two constants the reference sketch calls `emptyTankDistance` and `fullTankDistance`. Levels
-are derived from them:
+two quantities the reference sketch configures as `emptyTankDistance` and `fullTankDistance`
+(our code calls them `dEmptyCm` / `dFullCm`). Levels are derived from them:
 
 ```
 span  = d_empty − d_full                 152.1 − 30.2 = 121.9 cm of water
@@ -300,10 +301,20 @@ simple as the HC-SR04 the video uses.
 
 ## 10. References
 
-- Module datasheets: `AJ-SR04M` (mode table, R19, ranges, blind area) and `JSN-SR04M-2`
-  (working current < 8 mA, trigger ≥ 10 µs, 348 m/s arithmetic, target ≥ 0.5 m²). Local
-  copies used while writing this note: `$TEMP/sr04m/aj.txt`, `$TEMP/sr04m/jsn.txt`.
-- Seeed SenseCAP SR04M product page — same family, sells the probe with mounting hardware.
-- Tech StudyCell, *IoT Based Water Level Indicator using Ultrasonic Sensor*:
+What this note stands on, and what it deliberately does **not** carry:
+
+- **Module datasheets, cited not copied.** `AJ-SR04M` — ask for revision **200925A** (mode table and
+  `R19`, ranges, blind area, standby currents). `JSN-SR04M-2` — ask for revision **200427**
+  (working current < 8 mA, trigger ≥ 10 µs, the 348 m/s arithmetic, target ≥ 0.5 m², board size).
+  The values in §1–§2 are transcribed as facts and re-set in our own tables; **no datasheet PDF,
+  page image or paragraph of datasheet prose is in this repository**, and we do not link to someone
+  else's mirror of it. Get the document from the listing of the module you actually bought, because
+  the clone sellers differ and the revision is what tells you which numbers apply.
+- The same probe family is sold as a branded part with mounting hardware (Seeed sell it under the
+  SenseCAP name) if you would rather buy an assembly than a bare module.
+- **Tech StudyCell, *IoT Based Water Level Indicator using Ultrasonic Sensor*:**
   [write-up](https://iotcircuithub.com/iot-based-water-level-indicator/) ·
-  [video](https://youtu.be/9geREeE13jc) — GPIO numbering and the > 25 cm rule adopted here.
+  [video](https://youtu.be/9geREeE13jc) — source of the GPIO numbering and of the > 25 cm rule adopted
+  here (quoted in §3). Their page states no licence, so treat it as all-rights-reserved: borrow the
+  idea and the pin map, write your own code and draw your own diagrams. Line-by-line credit trail:
+  [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) §2.

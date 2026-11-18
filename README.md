@@ -11,6 +11,11 @@ Built around the same feature set as Tech StudyCell's
 filtering, calibration model, failure diagnosis, battery/solar power and alarm discipline this
 installation actually needs.
 
+What came from that project and what did not is stated line by line in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md): it contributed the concept, the GPIO numbers, the
+part choices and one quoted rule. **None of its code, schematic, PCB layout, images or prose is in
+this repository** — everything here was written for this tank.
+
 > **This is an instrument, not a control.** It reads and it alarms. It must never switch a pump
 > or a valve. Pump/valve interlocks belong in the pump's own float circuit, and no part of this
 > design is a safety device.
@@ -34,8 +39,10 @@ The change and the reasoning are in [docs/06-changelog.md](docs/06-changelog.md)
 
 ## Pin map
 
-Adopted from the reference project so you can follow its schematic with this repo. Full wiring:
-[docs/01-wiring-phase0.md](docs/01-wiring-phase0.md), picture [docs/img/01-wiring.svg](docs/img/01-wiring.svg).
+Adopted from the reference project so you can follow its schematic with this repo (a GPIO number is
+not a creative choice worth claiming; the credit is in [THIRD_PARTY_NOTICES.md §2](THIRD_PARTY_NOTICES.md)).
+Full wiring: [docs/01-wiring-phase0.md](docs/01-wiring-phase0.md), picture
+[docs/img/01-wiring.svg](docs/img/01-wiring.svg).
 
 | signal | GPIO | note |
 |---|---|---|
@@ -91,6 +98,24 @@ than inventing a zero.
 | [05-blynk-and-display.md](docs/05-blynk-and-display.md) | Blynk template, datastreams, events, quota maths, OLED reference, troubleshooting |
 | [06-changelog.md](docs/06-changelog.md) | rev A → rev B: what was removed and why, and the "no remnants" checklist |
 | [docs/img/](docs/img/) | wiring, mounting section, power tree, display + app (SVG + PNG) |
+
+## Licence, credit, and what is not ours
+
+| | |
+|---|---|
+| [LICENSE](LICENSE) | **MIT** for everything authored here — the sketch, the OLED driver, the generators, the figures, the docs |
+| [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) | the full credit trail: the Tech StudyCell / IoT CircuitHub build that set the concept and the pin map, the Adafruit font data, the libraries you install but we do not ship, how the datasheets are cited, and the fonts in the PNGs |
+
+Two things to know before you lift anything:
+
+1. **`arduino/water_level_gauge/wlg_font.h` is not MIT.** Its 475 bytes of glyph data are characters
+   32…126 taken byte for byte from `glcdfont.c` in **Adafruit GFX 1.13.0**, and Adafruit's BSD notice
+   travels with them (it is reproduced inside the file). Everything else in the firmware — including
+   `wlg_display.h`, which uses no Adafruit code — is MIT.
+2. **Datasheets are cited, not copied.** The spec numbers in the design record and in
+   [docs/03-ultrasonic.md](docs/03-ultrasonic.md) are transcribed as facts from the AJ-SR04M and
+   JSN-SR04M-2 documents; no datasheet PDF, page image or paragraph of datasheet prose is in this
+   repo. Get the datasheet for the module you actually buy, from its seller.
 
 ## Before you touch anything
 

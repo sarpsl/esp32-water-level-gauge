@@ -17,7 +17,7 @@ retired context elsewhere, so the grep list that proves it lives at the bottom o
 | compile-time sensor switch | `SENSOR_TYPE` 1 = ultrasonic (JSN-SR04T), 2 = BME280 + BMP280 differential (default), plus a "build 3" pressure-transmitter option | **no sensor switch at all.** Only `ENABLE_OLED` and `ENABLE_BLYNK`, which are output options |
 | mounting | 250 mm printed chimney, 60 mm bore, 1 mm mesh, louvre shade, face 52.2 cm above the full line | 100 mm lid hole, 150 mm probe clearance, cowl, **no screen of any kind** |
 | reference project | none of its own — rev A was designed from first principles | Tech StudyCell / IoT CircuitHub [*IoT Based Water Level Indicator using Ultrasonic Sensor*](https://iotcircuithub.com/iot-based-water-level-indicator/) ([video](https://youtu.be/9geREeE13jc)) — same module family, same GPIO numbers |
-| firmware size | (rev A build, not comparable) | **1 000 767 B flash (76 %), 50 652 B RAM (15 %)**, Blynk layer compiled in |
+| firmware size | (rev A build, not comparable) | **1 000 783 B flash (76 %), 50 652 B RAM (15 %)**, Blynk layer compiled in |
 
 The trigger for the rewrite was a decision, not a failure report: the SR04M-family module and the
 reference project above became the requirement, and a gauge with one sensor, one build and nothing
@@ -193,8 +193,17 @@ dimension table are in [`img/README.md`](img/README.md).
 
 ## 8. Verification state of this rewrite
 
+**Publishing pass (2026-11-18, on the way to a public repo):** the repo gained a licence and a credit
+trail, and credentials moved out of the tracked source.
+
+| change | why |
+|---|---|
+| `LICENSE` (MIT) + `THIRD_PARTY_NOTICES.md` | say in one place what is ours, what is Adafruit's (the 5×7 glyph table in `wlg_font.h`, BSD-licensed, its notice now reproduced inside the file — the 475 bytes were verified byte-identical to `glcdfont.c` v1.13.0 over characters 32…126), what you install but we do not ship (Blynk Apache-2.0, ESP32 core LGPL-2.1), and how the datasheets and the Tech StudyCell build are **cited rather than copied** |
+| `wlg_secrets.h` (git-ignored) + `wlg_secrets.example.h` | the Blynk token is a password, and the sketch used to tell you to paste it into a tracked file. It now lives in a file git will not stage; `#if __has_include("wlg_secrets.h")` picks it up, so not having it is the LAN-only build this repo is published in. Measured: 1 000 783 B without it, 1 008 271 B with a test token |
+| datasheet citations, `00-design.md` §2 and `03-ultrasonic.md` §10 | name the document and its revision (AJ-SR04M 200925A, JSN-SR04M-2 200427), keep no PDF and no mirrored link in the repo; the local scratch path that used to be cited there is gone |
+
 **Verified:** the sketch compiles clean for `esp32:esp32:esp32doit-devkit-v1` (Arduino CLI 1.6.0,
-esp32 core 3.3.12, Blynk 1.4.0) — 1 000 767 B flash / 50 652 B RAM, and 1 000 019 B / 50 500 B with
+esp32 core 3.3.12, Blynk 1.4.0) — 1 000 783 B flash / 50 652 B RAM, and 1 000 019 B / 50 500 B with
 `-DENABLE_BLYNK=0`; Blynk appears in the `Used library` list; and the grep list in §9 returns hits
 only where it says they are allowed — `README.md`, `00-design.md`, `03-ultrasonic.md`,
 `04-parts-list.md` and this file — plus the two false positives §9 calls out (a font bitmap byte
@@ -247,3 +256,6 @@ Two grep hits are false positives and are not signs of old code: `0x77` in `wlg_
 byte of the 5×7 digit font, and `p_diff` in `water_level_gauge.ino` is the comment that tells anyone
 with an old Blynk template which four datastreams to delete (V5 air, V6 RH, V7 water temp, V16
 differential pressure).
+
+Re-run the list after a licence/attribution pass: `LICENSE` and `THIRD_PARTY_NOTICES.md` must add
+**zero** hits, and as of 2026-11-18 they do.
