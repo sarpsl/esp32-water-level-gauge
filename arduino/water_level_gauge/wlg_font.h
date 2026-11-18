@@ -2,12 +2,54 @@
  *  wlg_font.h — the classic 5x7 ASCII bitmap font, ASCII 32..126 (95 glyphs,
  *  5 column bytes each, bit0 = the TOP row of the glyph).
  *
- *  Source: the "classic fixed-space bitmap font" from Adafruit_GFX (glcdfont.c,
- *  v1.13.0), which is a copy of the font used in the original Arduino
- *  LiquidCrystal / glcd libraries. Adafruit_GFX is BSD-3-Clause; that license
- *  covers the code, and the glyph data itself is the decades-old public-domain
- *  character ROM pattern set. Extracted mechanically (bytes 0..4 of each of the
- *  256 source characters, for characters 32..126) — no glyph was redrawn by hand.
+ *  SPDX-License-Identifier: BSD-2-Clause   (that is the shape of the licence text
+ *  Adafruit ship in GFX 1.13.0 license.txt; upstream just calls it "BSD license",
+ *  so keep their text rather than arguing about which BSD it is)
+ *
+ *  Provenance, stated exactly: the 475 bytes below are characters 32..126 taken
+ *  mechanically out of "glcdfont.c" in the **Adafruit GFX Library v1.13.0**
+ *  (bytes 0..4 of each of the 256 source characters). They were checked
+ *  byte-identical against that file over this range. Nothing here was redrawn.
+ *  Adafruit's own header line for that table:
+ *
+ *      // This is the 'classic' fixed-space bitmap font for Adafruit_GFX since 1.0.
+ *      // See gfxfont.h for newer custom bitmap font info.
+ *
+ *  So this file is NOT MIT-licensed like the rest of the project. The same 5x7
+ *  patterns have circulated as character-ROM shapes for decades (they turn up in
+ *  Arduino's LiquidCrystal examples too), but the bytes in this file came from
+ *  Adafruit's file, so Adafruit's licence travels with them:
+ *
+ *  -------------------------------------------------------------------------
+ *  Software License Agreement (BSD License)
+ *
+ *  Copyright (c) 2012 Adafruit Industries.  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
+ *
+ *  - Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ *  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ *  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ *  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ *  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ *  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ *  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ *  POSSIBILITY OF SUCH DAMAGE.
+ *  -------------------------------------------------------------------------
+ *
+ *  If you strip this file out and hand-write your own font, delete the notice
+ *  with it - see THIRD_PARTY_NOTICES.md §3 for what each part of the repo is
+ *  actually under.
  * ==========================================================================*/
 #ifndef WLG_FONT_H
 #define WLG_FONT_H

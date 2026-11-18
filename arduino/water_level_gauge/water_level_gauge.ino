@@ -44,6 +44,15 @@
  *      SPI flash lines. They are broken out on this board and they look usable.
  *    - Connect GND to the module before VCC (the datasheet asks for that order, and
  *      it matters with a mains-referenced supply).
+ *
+ *  LICENCE / CREDIT
+ *    SPDX-License-Identifier: MIT — see LICENSE at the top of this repo.
+ *    One exception: wlg_font.h carries glyph data from Adafruit_GFX (glcdfont.c,
+ *    v1.13.0) under Adafruit's BSD notice, which stays in that file.
+ *    The GPIO numbers, the part choices and the "> 25 cm above the full line" rule
+ *    follow the Tech StudyCell / IoT CircuitHub build cited above. No code, schematic,
+ *    PCB layout, image or text from that project is in here — everything below was
+ *    written for this installation. Full credit trail: THIRD_PARTY_NOTICES.md.
  * ==========================================================================*/
 
 /* ======================= 0. WHAT IS SWITCHED ON ==========================

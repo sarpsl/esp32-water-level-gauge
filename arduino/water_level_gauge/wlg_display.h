@@ -1,6 +1,14 @@
 /* ============================================================================
  *  wlg_display.h — SSD1306 128×64 I2C OLED driver, no external library.
  *
+ *  SPDX-License-Identifier: MIT
+ *  Original to this project: no Adafruit GFX / BusIO / SSD1306 code in here, and
+ *  nothing copied from the reference build's driver. What it does reuse is public
+ *  interface data — the SSD1306 command bytes (0xAE/0xAF/0xD5/0x8D/…) as described
+ *  in the Solomon Systech controller datasheet and repeated in every module's
+ *  bring-up notes. The sequencing, the frame-buffer layout, the flip handling,
+ *  the 5x7 glyph blit and the blanking policy are written here.
+ *
  *  Drives the 0.96" / 1.3" modules everyone buys (SSD1306 + 4 pin header:
  *  VCC, GND, SDA, SCL) on GPIO21/22 — the same pair the reference project uses.
  *  I2C is not really needed by anything else in this build (the SR04M talks TRIG
