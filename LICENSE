@@ -1,0 +1,40 @@
+MIT License
+
+Copyright (c) 2026 Syed Abdul Rahim
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+--------------------------------------------------------------------------------
+Third-party material in this repository
+
+The licence above covers only material authored in this repository. It does NOT
+cover third-party code or data that this repository credits separately, and
+those parts stay under their own licences (see THIRD_PARTY_NOTICES.md, which is
+part of this notice):
+
+  * arduino/water_level_gauge/wlg_font.h
+      glyph data taken from Adafruit_GFX (glcdfont.c, v1.13.0) - BSD licence,
+      Copyright (c) 2012 Adafruit Industries, reproduced verbatim in that file
+      and in THIRD_PARTY_NOTICES.md.
+
+Everything else referenced by name in this repository - module datasheets, the
+Tech StudyCell / IoT CircuitHub reference build, the Blynk library, the ESP32
+Arduino core, vendor product listings - is cited, not copied. No datasheet text,
+datasheet figure, schematic, PCB layout, photograph or source file from those
+sources is redistributed here.

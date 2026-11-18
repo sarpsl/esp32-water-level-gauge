@@ -1,0 +1,15 @@
+# Binary: never diff, never convert. Keeps the four PNG figures byte-exact.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.gz binary
+
+# Line endings. This repository is stored with CRLF (authored on Windows, text-mode
+# writes; core.autocrlf=false here). There are deliberately NO text=auto / eol rules
+# in this file yet: adding one would rewrite every tracked file on its next commit and
+# turn every future diff into noise. If the repo is ever normalised to LF, do it as one
+# dedicated commit ("chore: normalise line endings") with `* text=auto eol=lf` added
+# here in the same commit, so nobody has to wonder which convention is canonical.
