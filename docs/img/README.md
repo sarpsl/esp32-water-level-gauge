@@ -54,8 +54,12 @@ rm -rf "$TEMP/edgeprofile"          # a fresh profile every time, or a stale cac
         --force-device-scale-factor=2 \
         --window-size=1240,1040 \
         --screenshot="$TEMP/out.png" \
-        "file:///C:/Temp/esp32-water-level-guage/docs/img/04-display-and-app.svg"
+        "file:///C:/Temp/esp32-water-level-gauge/docs/img/04-display-and-app.svg"
 ```
+
+That `file:///C:/Temp/...` is this machine's clone location, not a canonical one — substitute the
+path you cloned the repo to, and keep it a **forward-slash absolute** path, which is the form Edge
+accepts on Windows.
 
 `--window-size` must equal the SVG's `viewBox` size, and then the output is exactly **2×** it:
 

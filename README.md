@@ -1,5 +1,7 @@
 # ESP32 water level gauge — 10 ft × 10 ft × 4 ft overhead tank
 
+**Repo:** <https://github.com/sarpsl/esp32-water-level-gauge>
+
 A read-only tank gauge: an **SR04M-family waterproof ultrasonic module** looking down at the
 water from above the lid, an ESP32, a 0.96" OLED on the box, a local buzzer with a stop button,
 and an optional [Blynk](https://blynk.cloud) phone dashboard with push notifications. It reports
