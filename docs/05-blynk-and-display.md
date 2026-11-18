@@ -11,17 +11,18 @@ commands).
 | switch | what it turns on | measured on this machine, today |
 |---|---|---|
 | `ENABLE_OLED 1` | the SSD1306 driver in `wlg_display.h` + the font in `wlg_font.h` | no external library at all; ~1 kB of code, a 1 kB framebuffer |
-| `ENABLE_BLYNK 1` | the cloud layer: `BlynkSimpleEsp32.h`, 4 `BLYNK_WRITE` handlers, 4 events | **+748 B flash, +152 B RAM** (1 000 767 → 1 000 019 B measured with `--build-property compiler.cpp.extra_flags=-DENABLE_BLYNK=0`) |
+| `ENABLE_BLYNK 1` | the cloud layer: `BlynkSimpleEsp32.h`, 4 `BLYNK_WRITE` handlers, 4 events | **+764 B flash, +152 B RAM** (1 000 783 → 1 000 019 B measured with `--build-property compiler.cpp.extra_flags=-DENABLE_BLYNK=0`) |
 
 Both default to 1 and both **switch themselves off at runtime** when the hardware or credentials
 they need are missing, so leaving them at 1 cannot brick a build: no panel at 0x3C → the OLED
 calls no-op; empty `BLYNK_AUTH_TOKEN` → the cloud layer stays idle and the boot banner says so.
 
-⚠ The +748 B figure was measured with a **blank template ID and token**. Most of Blynk's protocol
-is templates instantiated around the transport, and the domain literal is not even present in the
-binary until you paste a real `BLYNK_TEMPLATE_ID`. Expect a meaningfully bigger build once real
-credentials are in — measure it yourself rather than reusing the rev A number (that build was a
-different sketch and is quoted nowhere any more).
+⚠ Those figures were measured with **no `wlg_secrets.h` present** (blank template ID and token).
+Most of Blynk's protocol is templates instantiated around the transport, and the domain literal is
+not even present in the binary until a real `BLYNK_TEMPLATE_ID` is compiled in. Expect a meaningfully
+bigger build once real credentials are in — measured on this machine at **+7.5 kB flash / +48 B RAM**
+with a test template ID and token (1 008 271 B vs 1 000 783 B) — rather than reusing the rev A number
+(that build was a different sketch and is quoted nowhere any more).
 
 ```
 arduino-cli compile --fqbn esp32:esp32:esp32doit-devkit-v1 arduino/water_level_gauge
@@ -192,11 +193,17 @@ wrong boot mode — silent until you let go. GPIO23 is the safe alternative (`PI
 2. Console → your device → **Info** → copy `BLYNK_TEMPLATE_ID`, and the **Auth token**.
    `BLYNK_TEMPLATE_NAME` is the template's name, exactly as typed. Blynk IoT 2.x will not compile
    without ID and name.
-3. Paste them into §0 of the sketch. **The token is a credential**: whoever holds it can read *and*
-   write this device. Keep a filled-in token out of git, and rotate it in Console if it leaks.
+3. Put them in **`arduino/water_level_gauge/wlg_secrets.h`** — copy `wlg_secrets.example.h` and fill
+   it in. The sketch pulls that file in with `#if __has_include("wlg_secrets.h")`, so its presence
+   switches the cloud layer on and its absence leaves a LAN-only gauge; no editing of the `.ino`
+   needed, and it is in `.gitignore` on purpose.
+   **The token is a credential**: whoever holds it can read *and* write this device. Never put a real
+   token in a tracked file — a credential that reaches a public repo's history stays in the history,
+   so rotate it in Console (Device → Info) if one leaks. Do not commit `wlg_secrets.h`; check
+   `git status` shows it as ignored.
    The stock cloud endpoint is port **80 plain TCP** — same as the stock examples — so it is not a
    secret channel; the SSL variant (`BlynkSimpleEsp32_SSL.h`) is a one-line change if the LAN is
-   not trusted. Self-hosted: set `BLYNK_SERVER` / `BLYNK_SERVER_PORT`.
+   not trusted. Self-hosted: set `BLYNK_SERVER` / `BLYNK_SERVER_PORT` in the same file.
 4. Create the datastreams (§5.2) and the events (§5.3) in the **Template**, not the device.
 5. Flash, then send `k`. That prints the link state, pushes one sample set, and fires a test event —
    if the phone did not buzz, the event code is wrong, not the radio.
@@ -374,8 +381,8 @@ the four that specifically exercise the app and display layers:
 ## 9. Verified vs not verified
 
 **Verified on this machine today:** the sketch compiles for
-`esp32:esp32:esp32doit-devkit-v1` with no warnings — 1 000 767 B flash (76 %), 50 652 B RAM (15 %)
-with the Blynk layer compiled in, 999 959 B / 50 500 B with `-DENABLE_BLYNK=0`; Blynk 1.4.0 appears
+`esp32:esp32:esp32doit-devkit-v1` with no warnings — 1 000 783 B flash (76 %), 50 652 B RAM (15 %)
+with the Blynk layer compiled in, 1 000 019 B / 50 500 B with `-DENABLE_BLYNK=0`; Blynk 1.4.0 appears
 in the `Used library` list; the OLED driver needs no external library; the quota table's arithmetic
 is this firmware's own throttle logic plus Blynk's published 100 000-message free allowance.
 

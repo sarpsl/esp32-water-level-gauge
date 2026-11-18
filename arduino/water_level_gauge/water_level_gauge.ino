@@ -17,9 +17,9 @@
  *  shape as the reference build this project follows ("IoT Based Water Level
  *  Indicator using Ultrasonic Sensor", Tech StudyCell, https://youtu.be/9geREeE13jc,
  *  write-up https://iotcircuithub.com/iot-based-water-level-indicator/). It is
- *  strictly additive and fails safe: ENABLE_BLYNK 0, or a blank token, or no OLED
+ *  strictly additive and fails safe: ENABLE_BLYNK 0, or no wlg_secrets.h, or no OLED
  *  fitted, and this is still the same LAN-only gauge with the same CSV log and the
- *  same LOCAL buzzer. Before pasting a real token read docs/05-blynk-and-display.md
+ *  same LOCAL buzzer. Before filling in wlg_secrets.h read docs/05-blynk-and-display.md
  *  (quota maths, and why the token is a password).
  *
  *  WHAT THIS PHASE PROVES (before any PCB exists):
@@ -69,15 +69,41 @@
 #define ENABLE_BLYNK  1        // Blynk IoT cloud + phone app — needs the Blynk library
 #endif
 
-/* ---- paste these from Blynk Console -> your device -> Info -> Firmware -----
- * Blynk IoT 2.x will not compile without TEMPLATE_ID and TEMPLATE_NAME, and the
- * token is a credential: whoever holds it can read AND write this device. Keep a
- * filled-in token out of git, and re-issue it if this sketch ever goes public.   */
+/* ---- credentials live in wlg_secrets.h, which git ignores ------------------
+ * Copy wlg_secrets.example.h -> wlg_secrets.h (this folder) and fill it in; this
+ * #if __has_include picks it up automatically and the lines below then become
+ * defaults instead of the values actually used. No file, no cloud: the sketch
+ * still builds and runs as a LAN-only gauge, which is the state this repo is
+ * published in.
+ *
+ * Why a separate file instead of pasting the token here: a token committed to a
+ * public repo cannot be unpublished, even after a later commit deletes it. The
+ * token is a password — whoever holds it can read AND write this device — and if
+ * one ever reaches git history, rotate it in Blynk Console (Device -> Info).
+ *
+ * (__has_include is safe for a quoted include of a file in the sketch folder:
+ * the compiler resolves it relative to this .ino. It is NOT safe for a *library*
+ * include — see the note on #include <BlynkSimpleEsp32.h> below.)             */
+#if __has_include("wlg_secrets.h")
+#include "wlg_secrets.h"
+#endif
+
+/* Blynk IoT 2.x will not compile without TEMPLATE_ID and TEMPLATE_NAME. */
+#ifndef BLYNK_TEMPLATE_ID
 #define BLYNK_TEMPLATE_ID   ""                  // e.g. "TMPLAB12CD34"
+#endif
+#ifndef BLYNK_TEMPLATE_NAME
 #define BLYNK_TEMPLATE_NAME "Water Tank Gauge"
+#endif
+#ifndef BLYNK_AUTH_TOKEN
 #define BLYNK_AUTH_TOKEN    ""                  // the 32-character device token
+#endif
+#ifndef BLYNK_SERVER
 #define BLYNK_SERVER        ""                  // "" = blynk.cloud, else "192.168.1.50"
+#endif
+#ifndef BLYNK_SERVER_PORT
 #define BLYNK_SERVER_PORT   80                  // cloud uses 80; self-hosted usually 8080
+#endif
 
 /* Event codes must match what you create in Console -> Template -> Events, one per
    line, or the push simply never arrives (the cloud answers "event not found"). */
@@ -602,7 +628,7 @@ BLYNK_WRITE(V13) { cfg.mute = param.asInt() ? 1 : 0; cfgSave();
 
 void blynkSetup() {
   if (!blynkConfigured()) {
-    Serial.println(F("blynk: OFF — paste BLYNK_TEMPLATE_ID and BLYNK_AUTH_TOKEN from Console -> Info"));
+    Serial.println(F("blynk: OFF — copy wlg_secrets.example.h to wlg_secrets.h and put Console -> Info values in it"));
     Serial.println(F("      the phone app is optional; http://<ip>/ still works with no internet"));
     return;
   }

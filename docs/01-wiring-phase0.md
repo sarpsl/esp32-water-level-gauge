@@ -137,8 +137,9 @@ headroom and the OLED's brightness both fall off, and the brown-out risk during 
 6. Buzzer and LED: send `l 999` to force the low alarm — the buzzer beeps every 9 s, the LED
    comes on, the OLED status band inverts. Short press the button (snooze), hold 1.5 s (mute),
    `l 24` to put it back.
-7. Optional app layer: paste `BLYNK_TEMPLATE_ID` / `BLYNK_AUTH_TOKEN`, recompile, send `k`.
-   Skip it entirely and the gauge still does everything locally. See
+7. Optional app layer: copy `wlg_secrets.example.h` → `wlg_secrets.h`, put
+   `BLYNK_TEMPLATE_ID` / `BLYNK_AUTH_TOKEN` in it, recompile, send `k`. That file is git-ignored, so
+   the token never reaches the repo. Skip it entirely and the gauge still does everything locally. See
    [05-blynk-and-display.md](05-blynk-and-display.md).
 
 ---

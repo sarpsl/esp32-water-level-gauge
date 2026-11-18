@@ -1,0 +1,42 @@
+# ---- local credentials: this is the file that must never be pushed ----------
+# Copy wlg_secrets.example.h to wlg_secrets.h and fill it in. The sketch picks it
+# up automatically when it exists; without it the build is LAN-only.
+wlg_secrets.h
+
+# ---- Arduino / arduino-cli build output -------------------------------------
+build/
+core/
+sketch/
+*.bin
+*.elf
+*.hex
+*.map
+*.o
+*.d
+*.obj
+*.exe
+
+# vendored libraries (this project deliberately vendors nothing)
+libraries/
+.lib_build/
+
+# ---- captured logs and data --------------------------------------------------
+*.csv
+*.log
+
+# ---- Python (docs/img generators) -------------------------------------------
+__pycache__/
+*.pyc
+.venv/
+
+# ---- editors / OS -----------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- tool config that is machine-specific -----------------------------------
+arduino-cli.yaml
+arduino-cli.yaml.bak

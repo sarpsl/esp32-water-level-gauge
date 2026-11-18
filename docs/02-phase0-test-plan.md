@@ -13,8 +13,9 @@ arduino-cli upload  --fqbn esp32:esp32:esp32doit-devkit-v1 -p COM6 arduino/water
 arduino-cli monitor -p COM6 -c baudrate=115200
 ```
 
-Verified on this machine: 1 000 707 bytes (76 %) of flash, 50 652 bytes of RAM, no warnings,
-with the Blynk layer compiled in. Commands available in the sketch are listed by `h`:
+Verified on this machine: 1 000 783 bytes (76 %) of flash, 50 652 bytes of RAM, no warnings,
+with the Blynk layer compiled in and no `wlg_secrets.h` present. Commands available in the sketch
+are listed by `h`:
 `r s c w p e f a g t i v b l u j d D k x`.
 
 ---
