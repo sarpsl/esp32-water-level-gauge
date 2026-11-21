@@ -72,7 +72,7 @@ optional app layer needs the `Blynk` library (`arduino-cli lib install "Blynk"`)
 template ID and token, which go in **`wlg_secrets.h`** (copy `wlg_secrets.example.h`; that file is
 git-ignored, because a Blynk token is a password and a token that reaches a public repo's history
 cannot be unpublished). With no `wlg_secrets.h` it compiles and runs as a LAN-only gauge. Verified
-build: **1 000 783 bytes (76 %) flash, 50 652 bytes RAM, no warnings.**
+build: **1 002 307 bytes (76 %) flash, 50 652 bytes RAM, no warnings.**
 
 Then: `w <ssid>` · `p <password>` · reset · `e <empty distance>` · `f <full distance>` ·
 `v` to check span and litres-per-cm. `h` lists every command

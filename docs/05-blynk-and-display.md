@@ -11,7 +11,7 @@ commands).
 | switch | what it turns on | measured on this machine, today |
 |---|---|---|
 | `ENABLE_OLED 1` | the SSD1306 driver in `wlg_display.h` + the font in `wlg_font.h` | no external library at all; ~1 kB of code, a 1 kB framebuffer |
-| `ENABLE_BLYNK 1` | the cloud layer: `BlynkSimpleEsp32.h`, 4 `BLYNK_WRITE` handlers, 4 events | **+764 B flash, +152 B RAM** (1 000 783 → 1 000 019 B measured with `--build-property compiler.cpp.extra_flags=-DENABLE_BLYNK=0`) |
+| `ENABLE_BLYNK 1` | the cloud layer: `BlynkSimpleEsp32.h`, 4 `BLYNK_WRITE` handlers, 4 events | **+740 B flash, +152 B RAM** (1 002 307 → 1 001 567 B measured with `--build-property compiler.cpp.extra_flags=-DENABLE_BLYNK=0`, post-fix build) |
 
 Both default to 1 and both **switch themselves off at runtime** when the hardware or credentials
 they need are missing, so leaving them at 1 cannot brick a build: no panel at 0x3C → the OLED
@@ -134,13 +134,14 @@ page, so the three can never disagree:
 | `OK` | a good filtered reading, no alarm | — |
 | `WARMING UP` | fewer than 3 samples since boot | wait |
 | `LOW LEVEL` / `FULL - OVERFLOW` | an alarm is active | the buzzer and the button, §4 |
-| `SENSOR FAULT` | 3 consecutive unusable pings | check face, gate, cable |
+| `SENSOR FAULT` | 3 consecutive unusable pings — while the level is still held the panel usually shows the **reason word** instead (`NO ECHO`, `OUT OF RANGE`); this is the fallback word when there is no specific reason to name | check face, gate, cable |
 | `DEW ON FACE` | a rejected near read of 2–8 cm | wipe the face, desiccate the box |
 | `NEAR/BLIND` | a rejected near read of 12–25 cm | the surface is inside the gate — raise the face or lower the full line |
 | `NO ECHO` | the module's 40 ms timeout fired | surface too rippled/foamy/algae-covered, or the face is not square to the water, or the module is not in mode 1 |
 | `OUT OF RANGE` | a return further off than `d_empty + 15 cm` | wrong calibration, or the beam is looking past the water |
 | `MANY BAD READS` | over 25 % rejected | the fault summary in [02 test plan §7](02-phase0-test-plan.md) |
 | `STALE` | holding the last good value | the reading is old, not live |
+| `NO READING` | the held value expired after 20 bad pings — there is no level to show any more | the sensor fault sequence; module, cable, R19 |
 
 ---
 
@@ -167,7 +168,8 @@ Two guards that are easy to get wrong and are already handled:
   a run of `too close` rejections deliberately does **not**, because "the tank is genuinely over the
   full line" and "dew on the face" both look identical to the sensor and only one of them is a fault.
   Meanwhile the displayed level holds the last good value for up to 20 samples with a `STALE` label
-  rather than dropping to a believable zero.
+  rather than dropping to a believable zero — and once those 20 expire the number goes away
+  (`NO READING`): a held level stops pretending to be live.
 
 The button is the reference build's "push button to stop the buzzer", with debounce and a latch
 added:
@@ -370,19 +372,19 @@ the four that specifically exercise the app and display layers:
 | send | expect |
 |---|---|
 | `k` | `blynk: library yes, token set, template TMPL…, link up` + a push that arrives on the phone + one test event. If the link says down: token, template ID, and whether `wifiConnect()` got an IP |
-| `l 999` | low alarm: buzzer within 9 s, status band inverted, `level_low` push. Then `l 24` to restore |
+| `l 121` | low alarm: buzzer within 9 s, status band inverted, `level_low` push. Then `l 24` to restore. Thresholds are range-checked 0…span like V11, so on the 121.9 cm default span `l 121` is the forcing value and `l 999` is refused |
 | `u 0` | high alarm: LED solid on, `level_high` push. Then `u 110` |
 | `j` / button short / button hold | mute state changes, reported on the serial line, and the buzzer actually stops |
 | `d`, `D` | redraw, and flip the panel 180° (a panel mounted upside-down in a cowl reads upside-down) |
-| pull the module, wait 4 samples | `NO ECHO`, then `SENSOR FAULT` + `sensor_fault` push, level held with a stale label. Plug it back → `level_ok` |
+| pull the module, wait 4 samples | `STALE` for the first two rejects, then `NO ECHO` + `sensor_fault` push, the level held for 20 samples. Plug it back → `level_ok` |
 
 ---
 
 ## 9. Verified vs not verified
 
 **Verified on this machine today:** the sketch compiles for
-`esp32:esp32:esp32doit-devkit-v1` with no warnings — 1 000 783 B flash (76 %), 50 652 B RAM (15 %)
-with the Blynk layer compiled in, 1 000 019 B / 50 500 B with `-DENABLE_BLYNK=0`; Blynk 1.4.0 appears
+`esp32:esp32:esp32doit-devkit-v1` with no warnings — 1 002 307 B flash (76 %), 50 652 B RAM (15 %)
+with the Blynk layer compiled in, 1 001 567 B / 50 500 B with `-DENABLE_BLYNK=0`; Blynk 1.4.0 appears
 in the `Used library` list; the OLED driver needs no external library; the quota table's arithmetic
 is this firmware's own throttle logic plus Blynk's published 100 000-message free allowance.
 

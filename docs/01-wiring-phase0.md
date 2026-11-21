@@ -134,7 +134,8 @@ headroom and the OLED's brightness both fall off, and the brown-out risk during 
 4. Send `c`, then set the calibration for the bench: `e 152.1`, `f 30.2` (or the real measured
    distances if you are already at the tank). Send `v` to see span, gate and the L/cm figure.
 5. WiFi: `w YourSSID`, `p yourpassword`, reset. Read the IP. Open `http://<ip>/`.
-6. Buzzer and LED: send `l 999` to force the low alarm — the buzzer beeps every 9 s, the LED
+6. Buzzer and LED: send `l 121` to force the low alarm (thresholds are range-checked against the
+   span, so `l 999` is refused) — the buzzer beeps every 9 s, the LED
    comes on, the OLED status band inverts. Short press the button (snooze), hold 1.5 s (mute),
    `l 24` to put it back.
 7. Optional app layer: copy `wlg_secrets.example.h` → `wlg_secrets.h`, put

@@ -13,7 +13,7 @@ arduino-cli upload  --fqbn esp32:esp32:esp32doit-devkit-v1 -p COM6 arduino/water
 arduino-cli monitor -p COM6 -c baudrate=115200
 ```
 
-Verified on this machine: 1 000 783 bytes (76 %) of flash, 50 652 bytes of RAM, no warnings,
+Verified on this machine: 1 002 307 bytes (76 %) of flash, 50 652 bytes of RAM, no warnings,
 with the Blynk layer compiled in and no `wlg_secrets.h` present. Commands available in the sketch
 are listed by `h`:
 `r s c w p e f a g t i v b l u j d D k x`.
@@ -99,9 +99,12 @@ v              (prints d_empty, d_full, span, gate, L/cm)
 - **expect:** `span = 121.9 cm`, `92.9 L per cm`, `11327 L at full`.
 - Send `c` and read the CSV line: `raw_cm` and `filt_cm` should agree with what `r` said, and
   `level_cm` should be `152.1 − filt_cm`.
-- **Guard test:** type a nonsense pair (`e 40`, `f 35` → span 5 cm) and reset. The boot banner
-  must refuse the calibration and fall back to the defaults. If it accepts a 5 cm span, that
-  guard is broken.
+- **Guard test:** type a nonsense pair (`e 40`, `f 35` → span 5 cm). The second command must be
+  refused outright — `refused: span must be at least 20 cm` — and nothing stored. Send `i`, `u`
+  with no argument and `l 999` too: each must answer `Nothing changed` — thresholds and intervals
+  are range-checked like Blynk V10–V12, so a bare `i` must never become “sample every loop”.
+  Reset anyway: the boot banner must also refuse a bad stored calibration and fall back to the
+  defaults. If anything accepts a 5 cm span or a missing number, the validation is broken.
 
 ## T7 — filter and jump rejection **(bench)**
 
@@ -185,8 +188,11 @@ with the box **closed and sitting on the shut lid**, which is where it will live
 ## T13 — alarm end-to-end **(bench)**
 
 ```
-l 999      force the low threshold above the current level
+l 121      force the low threshold above the current level (default span is 121.9 cm)
 ```
+
+- `l 999` is now **refused** by design — serial thresholds are range-checked 0…span, the same guard
+  Blynk V11/V12 apply. If a 999 goes through, the validation is broken.
 
 - **expect:** within 9 s a beep (250 ms at 1.8 kHz for low, 2.6 kHz for high/fault), the LED
   behaviour per the design (heartbeat normally, solid on for the high alarm), the OLED status
