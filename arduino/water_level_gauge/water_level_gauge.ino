@@ -170,8 +170,11 @@
 #define FILTER_N           15       // median window
 #define MAX_JUMP_CM        12.0f    // bigger single-sample step than this needs confirming
 #define CONFIRM_COUNT      3        // consecutive reads needed to accept such a step
-#define HOLD_SAMPLES       20       // keep last good value for this many reads
+#define HOLD_SAMPLES       20       // keep last good value for this many BAD reads, then go stale
 #define FAULT_STREAK       3        // this many pings with no usable echo -> sensor fault alarm
+#define FAULT_GRACE_PINGS  9        // a gauge that never produced ONE valid read is judged faulty
+                                    // after this many pings — a dead module at first power-up must
+                                    // not sit silent forever behind the warm-up guard
 
 /* Defaults, all overridable from the serial console and stored in NVS.
  * The two distances are the whole calibration, and they are DISTANCES, not levels —
@@ -244,7 +247,8 @@ struct Filter {
   float  ring[FILTER_N];
   uint8_t idx = 0, count = 0;
   float  good = NAN, lastRaw = NAN;
-  int    confirm = 0, hold = 0;
+  int    confirm = 0;
+  uint8_t stale = 0;                // consecutive bad pings while holding the last good value
   uint32_t badCount = 0, totalCount = 0;
   uint32_t nNear = 0, nFar = 0, nNoEcho = 0;   // why, separately — SINCE the last accepted ping
   uint8_t  streakBad = 0, streakHard = 0;      // rejected pings in a row; "hard" = no echo / far
@@ -334,22 +338,32 @@ float medianOf() {
   return t[k / 2];
 }
 float filterUpdate(float rawCm, bool valid) {
-  if (valid) { flt.ring[flt.idx] = rawCm; flt.idx = (flt.idx + 1) % FILTER_N;
-               if (flt.count < FILTER_N) flt.count++; }
-  float med = (flt.count >= 3) ? medianOf() : NAN;
-  if (isnan(med)) { if (flt.hold > 0) { flt.hold--; return flt.good; } return NAN; }
-  if (isnan(flt.good)) { flt.good = med; flt.lastRaw = med; return med; }
-  if (fabsf(med - flt.good) > MAX_JUMP_CM) {          // a real fill, or one bad echo burst?
-    float side = (med > flt.good) ? 1.0f : -1.0f;
-    if (flt.confirm > 0 && (((flt.lastRaw > flt.good) ? 1.0f : -1.0f) == side)) {
-      if (++flt.confirm >= CONFIRM_COUNT) { flt.good = med; flt.confirm = 0; }
-    } else flt.confirm = 1;
-    flt.lastRaw = med;
-    if (flt.hold > 0) flt.hold--;
-    return flt.good;                                  // hold until confirmed
+  if (valid) {
+    flt.ring[flt.idx] = rawCm; flt.idx = (flt.idx + 1) % FILTER_N;
+    if (flt.count < FILTER_N) flt.count++;
+    flt.stale = 0;
+    if (flt.count < 3) return NAN;                    // WARMING UP: three good pings before a level
+    float med = medianOf();
+    if (isnan(flt.good)) { flt.good = med; flt.lastRaw = med; return med; }
+    if (fabsf(med - flt.good) > MAX_JUMP_CM) {        // a real fill, or one bad echo burst?
+      float side = (med > flt.good) ? 1.0f : -1.0f;
+      if (flt.confirm > 0 && (((flt.lastRaw > flt.good) ? 1.0f : -1.0f) == side)) {
+        if (++flt.confirm >= CONFIRM_COUNT) {
+          flt.good = med; flt.confirm = 0; flt.lastRaw = med; return med;
+        }
+      } else flt.confirm = 1;
+      flt.lastRaw = med;
+      return flt.good;                                // hold until confirmed
+    }
+    flt.good = med; flt.confirm = 0;
+    return med;
   }
-  flt.good = med; flt.confirm = 0; flt.hold = HOLD_SAMPLES;
-  return med;
+  /* A bad ping must NOT re-median the frozen ring — that made the stale value look freshly
+   * confirmed on every reject, so the hold never expired and rd.valid never went false.
+   * Hold flt.good verbatim for HOLD_SAMPLES bad pings, then expire it: statusText() can
+   * name the reason, and a level that is older than that stops pretending to be live. */
+  if (!isnan(flt.good) && flt.stale < HOLD_SAMPLES) { flt.stale++; return flt.good; }
+  return NAN;
 }
 
 void takeSample(bool verbose) {
@@ -429,7 +443,17 @@ const char *statusText() {
   }
   if (alrm.high)                                     { strcpy(s, "FULL - OVERFLOW"); return s; }
   if (alrm.low)                                      { strcpy(s, "LOW LEVEL");    return s; }
-  if (alrm.fault)                                    { strcpy(s, "SENSOR FAULT"); return s; }
+  /* Faulted while still holding the last good level: name the reason so the word points at
+   * the fix (wipe the face / check the cable / refit R19); SENSOR FAULT is only the fallback
+   * when there is no specific reject to point at. */
+  if (alrm.fault) {
+    if      (lastReason == URS_NOECHO)               { strcpy(s, "NO ECHO");       return s; }
+    else if (lastReason == URS_FAR)                  { strcpy(s, "OUT OF RANGE");  return s; }
+    else                                             { strcpy(s, "SENSOR FAULT");  return s; }
+  }
+  /* Reading is live-shaped but held: some pings were thrown away, the level shown is the
+   * last good one (fewer than HOLD_SAMPLES ago). */
+  if (flt.stale)                                     { strcpy(s, "STALE");        return s; }
   if (flt.totalCount > 8 && flt.badCount * 4 > flt.totalCount)
                                                      { strcpy(s, "MANY BAD READS"); return s; }
   strcpy(s, "OK");
@@ -581,7 +605,7 @@ void cfgSave() {
  * rather than renumbering anything — the user's existing template stays valid.
  */
 #if BLYNK_ON
-bool     blynkLinked = false;
+bool     blynkLinked = false, blynkCfgDone = false;
 uint32_t tBlynkRetry = 0, tBlynkSlow = 0;
 char     lastStatusSent[24] = "";
 
@@ -626,6 +650,19 @@ BLYNK_WRITE(V12) {
 BLYNK_WRITE(V13) { cfg.mute = param.asInt() ? 1 : 0; cfgSave();
                    Serial.printf("blynk V13: buzzer %s\n", cfg.mute ? "muted" : "armed"); }
 
+/* Blynk.config() exactly once, and strictly before the first Blynk.connect(). In Blynk
+ * 1.4.0 the protocol's authkey is NULL until config()/begin() sets it, and the connect
+ * path runs strlen(authkey) — a bare Blynk.connect() with no prior config() is a
+ * Guru Meditation, not a failed link. blynkService() used to reconnect without ever
+ * having configured when boot happened with the radio down; that is what this guards. */
+bool blynkApplyConfig() {
+  if (blynkCfgDone || !blynkConfigured()) return blynkCfgDone;
+  if (BLYNK_SERVER[0]) Blynk.config(BLYNK_AUTH_TOKEN, BLYNK_SERVER, BLYNK_SERVER_PORT);
+  else                 Blynk.config(BLYNK_AUTH_TOKEN);          // blynk.cloud:80
+  blynkCfgDone = true;
+  return true;
+}
+
 void blynkSetup() {
   if (!blynkConfigured()) {
     Serial.println(F("blynk: OFF — copy wlg_secrets.example.h to wlg_secrets.h and put Console -> Info values in it"));
@@ -633,8 +670,7 @@ void blynkSetup() {
     return;
   }
   if (!WiFi.isConnected()) { Serial.println(F("blynk: no WiFi yet — will try once the link is up")); return; }
-  if (BLYNK_SERVER[0]) Blynk.config(BLYNK_AUTH_TOKEN, BLYNK_SERVER, BLYNK_SERVER_PORT);
-  else                 Blynk.config(BLYNK_AUTH_TOKEN);          // blynk.cloud:80
+  blynkApplyConfig();
   blynkLinked = Blynk.connect(4000);
   Serial.printf("blynk: %s  host=%s port=%u\n", blynkLinked ? "connected" : "not reachable (retrying in the background)",
                 BLYNK_SERVER[0] ? BLYNK_SERVER : "blynk.cloud", (unsigned)BLYNK_SERVER_PORT);
@@ -681,6 +717,7 @@ void blynkNotify(const char *code, const String &what) {
 void blynkService(uint32_t now) {
   if (!blynkConfigured()) return;
   if (!WiFi.isConnected()) return;              // wifiConnect()/loop() own the radio
+  if (!blynkApplyConfig()) return;              // config() before ANY connect(), always
   if (!Blynk.connected()) {
     if (now - tBlynkRetry > 30000) {
       tBlynkRetry = now;
@@ -765,9 +802,15 @@ void setFaultAlarm(bool on) {
 void evaluateAlarms() {
   /* At power-up the median filter needs three good reads before it produces a value,
    * and until then rd.valid is legitimately false. Judging the fault alarm in that
-   * window would beep and push on every reboot. */
+   * window would beep and push on every reboot. But the guard must not become a gag:
+   * a gauge that has taken FAULT_GRACE_PINGS pings without ONE valid read (dead module,
+   * R19 fitted, unplugged cable at first power-up) is exactly as faulty as one that
+   * dies after warm-up, and it gets judged. */
   static bool warmedUp = false;
-  if (!warmedUp) { if (rd.valid) warmedUp = true; else return; }
+  if (!warmedUp) {
+    if (rd.valid) warmedUp = true;
+    else if (flt.totalCount < FAULT_GRACE_PINGS) return;   // boot window: stay silent
+  }
 
   /* A ping that came back but landed outside the gate is a sensor fault, not a level:
    * the module can see the surface, it just cannot see it *usefully*. Two sub-cases are
@@ -828,6 +871,7 @@ void buttonService(uint32_t now) {
 }
 
 /* ======================= 10. WIFI + WEB ================================== */
+static bool apFallback = false;                 // AP opened because the STA link failed
 void wifiConnect() {
   if (cfg.ssid[0] == 0) {
     Serial.println(F("!! no SSID saved yet — send:  w YourWifiName   then:  p yourpassword"));
@@ -843,9 +887,16 @@ void wifiConnect() {
                   WiFi.localIP().toString().c_str(), WiFi.RSSI(),
                   WiFi.gatewayIP().toString().c_str());
   else {
+    /* AP_STA, not AP: a grid blip that reboots the box before the router is back used to
+     * put the radio in pure AP mode, and the loop's retry was gated on WIFI_STA — so the
+     * gauge sat unreachable on the roof until someone pressed reset. In AP_STA the setup
+     * AP stays open AND the STA side keeps trying (see the retry block in loop); loop()
+     * closes the AP once the link is back. */
     Serial.println(F("\nwifi: FAILED → opening AP  WaterLevel-Setup / waterlevel  on 192.168.4.1"));
-    WiFi.mode(WIFI_AP);
+    Serial.println(F("      still retrying the saved network every 20 s — the AP closes by itself"));
+    WiFi.mode(WIFI_AP_STA);
     WiFi.softAP("WaterLevel-Setup", "waterlevel");
+    apFallback = true;
   }
 }
 void wifiScanPrint() {
@@ -989,6 +1040,21 @@ void printConfig() {
                 (unsigned long)flt.nNear, (unsigned long)flt.nNoEcho, (unsigned long)flt.nFar,
                 cfg.sampleSec);
 }
+/* Serial numbers get the same guard their Blynk twins (V10..V12) always had:
+ * `i` with no argument used to become a sample EVERY loop (quota incinerator) and
+ * `e`/`f` with no argument zeroed the calibration span — the cfgLoad() boot guard
+ * caught that only after a reboot. Fail the whole command, with a reason, save nothing. */
+static bool argFloat(const String &cmd, float &out, float lo, float hi, const char *what) {
+  String a = cmd.substring(1); a.trim();
+  if (a.length() == 0)   { Serial.printf("%s: no value given — see 'h'. Nothing changed\n", what); return false; }
+  char *endp = nullptr;
+  float v = strtof(a.c_str(), &endp);
+  if (endp == a.c_str()) { Serial.printf("%s: '%s' is not a number. Nothing changed\n", what, a.c_str()); return false; }
+  if (v < lo || v > hi)  { Serial.printf("%s: %.1f is outside %.0f to %.0f. Nothing changed\n", what, (double)v, (double)lo, (double)hi); return false; }
+  out = v;
+  return true;
+}
+
 void handleSerial() {
   static String buf;
   while (Serial.available()) buf += (char)Serial.read();
@@ -1013,31 +1079,45 @@ void handleSerial() {
                        else wifiScanPrint(); }
   else if (c == 'p') { cmd.substring(2).toCharArray(cfg.pass, 65); cfgSave();
                        Serial.println(F("password saved")); }
-  else if (c == 'e') { cfg.dEmptyCm = cmd.substring(1).toFloat(); cfgSave();
-                       Serial.printf("d_empty = %.1f cm  → span %.1f cm\n", cfg.dEmptyCm, spanCm()); }
-  else if (c == 'f') { cfg.dFullCm  = cmd.substring(1).toFloat(); cfgSave();
-                       Serial.printf("d_full  = %.1f cm  → span %.1f cm\n", cfg.dFullCm, spanCm()); }
-  else if (c == 'a') { cfg.areaCm2  = cmd.substring(1).toFloat(); cfgSave();
+  else if (c == 'e') { float v; if (argFloat(cmd, v, 25.0f, 600.0f, "e <cm> — probe face→empty")) {
+                       float old = cfg.dEmptyCm; cfg.dEmptyCm = v;
+                       if (spanCm() < 20.0f) { cfg.dEmptyCm = old;
+                         Serial.println(F("   refused: span must be at least 20 cm — d_empty sits ABOVE d_full. Nothing changed")); }
+                       else { cfgSave(); Serial.printf("d_empty = %.1f cm  → span %.1f cm\n", cfg.dEmptyCm, spanCm()); } } }
+  else if (c == 'f') { float v; if (argFloat(cmd, v, 20.0f, 550.0f, "f <cm> — probe face→full")) {
+                       float old = cfg.dFullCm; cfg.dFullCm = v;
+                       if (spanCm() < 20.0f) { cfg.dFullCm = old;
+                         Serial.println(F("   refused: span must be at least 20 cm — d_full sits BELOW d_empty. Nothing changed")); }
+                       else { cfgSave(); Serial.printf("d_full  = %.1f cm  → span %.1f cm\n", cfg.dFullCm, spanCm()); }
+                       if (cfg.dFullCm < cfg.blindCm + 5.0f)
+                         Serial.println(F("   !! d_full leaves under 5 cm over the gate — raise the probe face (docs/03)")); } }
+  else if (c == 'a') { float v; if (argFloat(cmd, v, 100.0f, 10000000.0f, "a <cm²> — plan area")) {
+                       cfg.areaCm2 = v; cfgSave();
                        Serial.printf("area = %.0f cm²  → %.1f L per cm\n",
-                                     cfg.areaCm2, cfg.areaCm2 / 1000.0f); }
-  else if (c == 'g') { cfg.blindCm = cmd.substring(1).toFloat(); cfgSave();
+                                     cfg.areaCm2, cfg.areaCm2 / 1000.0f); } }
+  else if (c == 'g') { float v; if (argFloat(cmd, v, 5.0f, 150.0f, "g <cm> — gate")) {
+                       cfg.blindCm = v; cfgSave();
                        Serial.printf("gate = %.1f cm — anything the module reports closer than this is thrown away\n",
-                                     cfg.blindCm); }
-  else if (c == 't') { cfg.airTC = cmd.substring(1).toFloat(); cfgSave();
+                                     cfg.blindCm); } }
+  else if (c == 't') { float v; if (argFloat(cmd, v, -30.0f, 60.0f, "t <°C> — air temp")) {
+                       cfg.airTC = v; cfgSave();
                        Serial.printf("air_t = %.0f °C → sound speed %.3f m/s (%.2f cm error per 15 °C at 150 cm)\n",
                                      cfg.airTC, speedOfSoundMmPerUs(cfg.airTC) * 1000.0f,
-                                     0.00177f * 15.0f * cfg.dEmptyCm); }
-  else if (c == 'i') { cfg.sampleSec = cmd.substring(1).toInt(); cfgSave();
-                       Serial.printf("sample interval = %u s\n", cfg.sampleSec); }
+                                     0.00177f * 15.0f * cfg.dEmptyCm); } }
+  else if (c == 'i') { float v; if (argFloat(cmd, v, 5.0f, 7200.0f, "i <s> — sample interval")) {   // same range as V10
+                       cfg.sampleSec = (uint16_t)(v + 0.5f); cfgSave();
+                       Serial.printf("sample interval = %u s\n", cfg.sampleSec); } }
   else if (c == 'b') Serial.printf("vbat = %.3f V  ≈ %.0f %%\n", vbat, vbatPct(vbat));
-  else if (c == 'l') { cfg.lowCm  = cmd.substring(1).toFloat(); cfgSave();
-                       Serial.printf("low alarm  = %.1f cm  (%.0f %% of %.1f cm)",
+  else if (c == 'l') { float v; if (argFloat(cmd, v, 0.0f, spanCm(), "l <cm> — low alarm")) {      // same range as V11
+                       cfg.lowCm = v; cfgSave();
+                       Serial.printf("low alarm  = %.1f cm  (%.0f %% of %.1f cm)\n",
                                      cfg.lowCm, cfg.lowCm / spanCm() * 100.0f, spanCm());
-                       evaluateAlarms(); }
-  else if (c == 'u') { cfg.highCm = cmd.substring(1).toFloat(); cfgSave();
-                       Serial.printf("high alarm = %.1f cm  (%.0f %% of %.1f cm)",
+                       evaluateAlarms(); } }
+  else if (c == 'u') { float v; if (argFloat(cmd, v, 0.0f, spanCm(), "u <cm> — high alarm")) {      // same range as V12
+                       cfg.highCm = v; cfgSave();
+                       Serial.printf("high alarm = %.1f cm  (%.0f %% of %.1f cm)\n",
                                      cfg.highCm, cfg.highCm / spanCm() * 100.0f, spanCm());
-                       evaluateAlarms(); }
+                       evaluateAlarms(); } }
   else if (c == 'j') { cfg.mute = cfg.mute ? 0 : 1; cfgSave();
                        Serial.printf("buzzer %s (button: short = snooze, hold 1.5 s = this)\n",
                                      cfg.mute ? "muted" : "armed"); }
@@ -1092,6 +1172,10 @@ void setup() {
                   "   The gauge goes blind just when the tank is nearly full, and swell or face dew eat the\n"
                   "   margin. Raise the probe face: docs/03-ultrasonic.md\n", cfg.dFullCm);
 
+  /* Core 3.x Wire does NOT lazy-init on first beginTransmission like 2.x did: without
+   * this the OLED probe fails forever on a healthy panel, and the PIN_SDA/PIN_SCL
+   * defines below are just comments. */
+  Wire.begin(PIN_SDA, PIN_SCL);
   oledSetup();
 
   wifiConnect();
@@ -1129,9 +1213,18 @@ void loop() {
 
   if (now - tVbat > 60000) { tVbat = now; vbat = readVbat(); }
   if (now - tScan > 600000) { tScan = now; if (WiFi.isConnected()) wifiScanPrint(); }
-  if (!WiFi.isConnected() && WiFi.getMode() == WIFI_STA && now > 30000) {
+  /* Retry the saved network with NO mode gate — an AP fallback leaves us in AP_STA and the
+   * STA side must keep trying (the old WIFI_STA-only check meant AP fallback was permanent
+   * until a manual reset). Only skip when there is no network to retry. */
+  if (cfg.ssid[0] && !WiFi.isConnected() && now > 30000) {
     static uint32_t tRetry = 0;
-    if (now - tRetry > 20000) { tRetry = now; Serial.println(F("wifi: retrying")); WiFi.disconnect(); WiFi.begin(cfg.ssid, cfg.pass); }
+    if (now - tRetry > 20000) { tRetry = now; Serial.println(F("wifi: retrying")); WiFi.begin(cfg.ssid, cfg.pass); }
+  }
+  if (apFallback && WiFi.isConnected()) {      // back from the fallback: close the open door
+    apFallback = false;
+    WiFi.softAPdisconnect(true);
+    WiFi.mode(WIFI_STA);
+    Serial.println(F("wifi: link back — setup AP closed"));
   }
   delay(10);
 }
