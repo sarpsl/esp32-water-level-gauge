@@ -2,7 +2,8 @@
 
 Rewritten **2026-11-18**. This is the record of what was replaced, what it cost, and what rev B
 gives up. §9 is the authority on where the old design may still be named: mostly here, and only in
-retired context elsewhere, so the grep list that proves it lives at the bottom of this file.
+retired context elsewhere, so the grep list that proves it lives at the end of this file — ahead of
+it sits only the dated fix log in §10.
 
 ---
 
@@ -17,7 +18,7 @@ retired context elsewhere, so the grep list that proves it lives at the bottom o
 | compile-time sensor switch | `SENSOR_TYPE` 1 = ultrasonic (JSN-SR04T), 2 = BME280 + BMP280 differential (default), plus a "build 3" pressure-transmitter option | **no sensor switch at all.** Only `ENABLE_OLED` and `ENABLE_BLYNK`, which are output options |
 | mounting | 250 mm printed chimney, 60 mm bore, 1 mm mesh, louvre shade, face 52.2 cm above the full line | 100 mm lid hole, 150 mm probe clearance, cowl, **no screen of any kind** |
 | reference project | none of its own — rev A was designed from first principles | Tech StudyCell / IoT CircuitHub [*IoT Based Water Level Indicator using Ultrasonic Sensor*](https://iotcircuithub.com/iot-based-water-level-indicator/) ([video](https://youtu.be/9geREeE13jc)) — same module family, same GPIO numbers |
-| firmware size | (rev A build, not comparable) | **1 000 783 B flash (76 %), 50 652 B RAM (15 %)**, Blynk layer compiled in |
+| firmware size | (rev A build, not comparable) | **1 002 307 B flash (76 %), 50 652 B RAM (15 %)**, Blynk layer compiled in (post-fix build; §10 carries the fix log) |
 
 The trigger for the rewrite was a decision, not a failure report: the SR04M-family module and the
 reference project above became the requirement, and a gauge with one sensor, one build and nothing
@@ -208,7 +209,8 @@ esp32 core 3.3.12, Blynk 1.4.0) — 1 000 783 B flash / 50 652 B RAM, and 1 000 
 only where it says they are allowed — `README.md`, `00-design.md`, `03-ultrasonic.md`,
 `04-parts-list.md` and this file — plus the two false positives §9 calls out (a font bitmap byte
 `0x77` in `wlg_font.h`, and the `p_diff` retirement comment in the sketch). Nothing survives in the
-firmware logic, the figures, or the two how-to-build documents.
+firmware logic, the figures, or the two how-to-build documents. Sizes quoted here are the 2026-11-18
+rewrite build; the 2026-11-20 fixes in §10 move them.
 
 **Not verified:** nothing has been flashed or run. Every runtime claim in the docs — the 45 ms
 timeout interaction, the 3-sample jump confirmation, the 9 s beep cadence, the quota table, the
@@ -259,3 +261,39 @@ differential pressure).
 
 Re-run the list after a licence/attribution pass: `LICENSE` and `THIRD_PARTY_NOTICES.md` must add
 **zero** hits, and as of 2026-11-18 they do.
+
+---
+
+## 10. Firmware fix log — 2026-11-20 (post-rewrite, from external review)
+
+An external review (kept at `CODE_REVIEW.md`, repo root) read the firmware against the installed
+core and library sources rather than only against this repo's docs, and found six defects. All six
+are fixed, plus the doc↔code promises the code could not keep. Worth saying out loud: every one of
+them survived phase-0 style *compile* checks — five of the six only show up after install, on the
+roof, or after an event (a grid blip, a cold boot before the router) that none of T1–T15 schedules.
+The test plan has to reach past the bench.
+
+| # | fix | what was wrong, and the evidence |
+|---|---|---|
+| 1 | `Wire.begin(PIN_SDA, PIN_SCL)` at boot, before the OLED probe | core 3.x `TwoWire` does not lazy-init on first `beginTransmission` the way 2.x did: `txBuffer` is NULL until `begin()` allocates it, so `i2cProbe()` failed forever and a healthy panel read as absent — and the pin defines never reached Wire at all. Evidence: core 3.3.12 `Wire.cpp` (constructor ~line 41, `allocateWireBuffer` ~line 249, `endTransmission` error 4 "NULL TX buffer pointer" ~line 453) |
+| 2 | hold-last-good path: a bad ping no longer re-medians the frozen ring | the stale median equalled the held value, so the jump check passed and **re-armed the hold timer on every rejected ping**: `rd.valid` never went false, the 20-sample expiry was unreachable, `NO READING` could never appear, and the `STALE` label the README and T10 promise was dead code. Now a bad ping holds `flt.good` verbatim for `HOLD_SAMPLES` pings, then the reading expires. While faulting, `statusText()` shows the **reason word** (`NO ECHO` / `OUT OF RANGE`) with `SENSOR FAULT` only as fallback — which is what T10 always expected to see |
+| 3 | `FAULT_GRACE_PINGS 9`: the warm-up silence now expires | the guard existed to stop reboot beeps, but it also gagged a gauge that never got ONE valid read: dead module or fitted R19 at first power-up meant no buzzer and no push, ever. After nine pings the fault is judged even with zero valid reads; a reboot with a working sensor warms up long before that |
+| 4 | WiFi fallback opens `WIFI_AP_STA`, the 20 s retry has no mode gate, and the AP closes itself when the link returns | AP fallback was a trapdoor: the loop's STA retry was gated on `getMode() == WIFI_STA`, so a grid blip that rebooted the box before the router was back left it AP-only until someone pressed reset — Blynk silent, LAN page unreachable, buzzer beeping a stale level on the roof |
+| 5 | `blynkApplyConfig()`: `Blynk.config()` exactly once, strictly before any `Blynk.connect()` | with WiFi down at boot, `blynkSetup()` skipped `config()` and `blynkService()` later called `Blynk.connect(4000)` with `authkey` still NULL — Blynk 1.4.0's login path runs `strlen(authkey)` (`BlynkProtocol.h` ~line 228) → Guru Meditation bootloop. Latent only because defect 4 made the path unreachable: fixing 4 alone would have turned a silent stall into a crash loop, so 4+5 ship together |
+| 6 | serial numbers validated (`argFloat`): `e f a g t i l u` demand a parseable number in range (ranges mirror V10–V12); a sub-20 cm span is refused at the command instead of after a reboot; `l`/`u` lost their missing `\n` | `i` alone meant "sample every loop" — ~12 pings/s, the free message quota gone inside three hours; `e` alone zeroed a calibration until the next reboot. The Blynk handlers always checked; the console was the hole |
+
+The filter/hold/fault state machine (rows 2–3) was verified on a host-side replica of the exact
+code — five scenarios: healthy; unplugged (T10's sequence: `STALE` at rejects 1–2, `NO ECHO` +
+fault at 3, hold expires at 21, recovery on replug); a real fill (no single ping drags the median,
+converges as designed); and a cold install with a dead module (fault fires at ping 9).
+
+Docs moved with the code: T6's guard test now refuses bad input **outright** and gains negative
+tests (`i` bare, `u` bare, `l 999`); forcing `l` above full now means `l 121` on the 121.9 cm
+default span, since thresholds are range-checked 0…span — `01` step 6, T13 and the `05` quick
+reference updated; the `SENSOR FAULT` row in `05` says it usually shows as the reason word, a
+`NO READING` row joins the table because it can appear again, and the module-pull row matches the
+sequence the host replica reproduced.
+
+**New verified build:** 1 002 307 B flash (76 %) / 50 652 B RAM (15 %) with the Blynk layer in,
+1 001 567 B / 50 500 B with `-DENABLE_BLYNK=0` — esp32 core 3.3.12, Blynk 1.4.0, zero warnings.
+The fixes add 1 524 B; the Blynk layer now costs +740 B flash / +152 B RAM over the LAN-only build.
